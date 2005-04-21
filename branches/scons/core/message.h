@@ -11,9 +11,9 @@
 #ifndef __parabellym_message_h
 #define __parabellym_message_h
 
-#include <faeutil/mutex.h>
-#include <faeutil/memory.h>
-#include <faeutil/list.h>
+#include "../util/mutex.h"
+#include "../util/memory.h"
+#include "../util/list.h"
 #include "msgq.h"
 
 class message
@@ -35,7 +35,7 @@ protected:
 	// Message name hint (crc32).
 	hint_t name_hint;
 	// The list of subscribed queues.
-	faeutil::list<msgq::body *> roster;
+	funs::list<msgq::body *> roster;
 	// Initialization.
 	message(struct msgid &);
 	~message(void);

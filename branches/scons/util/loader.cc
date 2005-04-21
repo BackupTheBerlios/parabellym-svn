@@ -9,13 +9,13 @@
 //
 // $Id$
 
-#include <faeutil/sofunc.h>
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _WIN32
 # include <unistd.h>
 #endif
 #include "../core/api.h"
+#include "sofunc.h"
 
 #if defined(_WIN32)
 # define init_func_name "para_core_init@0"
@@ -33,10 +33,10 @@ int para_core_load(const char *appname)
 {
 	int rc = PEC_INIT_FAILURE;
 
-	hInst = os_loadmod("libparabellym." MDF_SOEXT);
+	hInst = os_loadmod("libparabellym" SOEXT);
 
 	if (hInst == NULL)
-		hInst = os_loadmod("paracore." MDF_SOEXT);
+		hInst = os_loadmod("paracore" SOEXT);
 
 	if (hInst != NULL) {
 		para_core_init_fn fn = (para_core_init_fn)os_getprocaddr(hInst, init_func_name);

@@ -6,7 +6,7 @@
 // The supervisor thread dispatcher.
 
 #include <string.h>
-#include <faeutil/sofunc.h>
+#include "../util/sofunc.h"
 #include "debug.h"
 #include "mdisp.h"
 #include "message.h"

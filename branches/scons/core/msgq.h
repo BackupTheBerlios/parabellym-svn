@@ -8,8 +8,8 @@
 #ifndef __parabellum_core_msgq_h
 #define __parabellum_core_msgq_h
 
-#include <faeutil/list.h>
-#include <faeutil/sem.h>
+#include "../util/list.h"
+#include "../util/sem.h"
 #include "msgp.h"
 
 class msgq
@@ -71,19 +71,19 @@ class msgq::body
 	// Queue id.
 	int id;
 	// the list of messages this queue receives.
-	faeutil::list <int> roster;
+	funs::list <int> roster;
 protected:
 	// Packet list mutex.  Locked when peeking or poking
 	// data to the queue.
-	faeutil::mutex mx;
+	funs::mutex mx;
 	// This semaphore is signalled when a new message
 	// is available in the queue.
-	faeutil::seml psem;
+	funs::seml psem;
 	// The list of packets.
-	faeutil::list_ut<msgp> packetlist;
+	funs::list_ut<msgp> packetlist;
 	// The list of signals.  Quite like packets, but
 	// with a higher priority and with no data payload.
-	faeutil::list_ut<int> siglist;
+	funs::list_ut<int> siglist;
 	// Incremente reference counter.
 	void attach();
 	// Decrements reference counter.  Returns true if refc becomes zero.

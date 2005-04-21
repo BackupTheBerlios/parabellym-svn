@@ -36,7 +36,7 @@ static const struct errmsg {
 	{ PEC_SUCCESS, "success" }
 };
 
-faeutil::tlskey tlsk;
+funs::tlskey tlsk;
 
 static mdisp* mod_restore(void)
 {

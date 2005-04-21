@@ -10,8 +10,8 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include <faeutil/faeutil.h>
-#include <faeutil/sem.h>
+#include "../util/boif.h"
+#include "../util/sem.h"
 #include "api.h"
 #include "debug.h"
 #include "msgq.h"

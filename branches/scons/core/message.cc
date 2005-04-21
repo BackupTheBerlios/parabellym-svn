@@ -7,13 +7,14 @@
 # include <stdio.h>
 #endif
 #include <string.h>
-#include <faeutil/stock.h>
+#include "../util/crc32.h"
+#include "../util/stock.h"
 #include "api.h"
 #include "debug.h"
 #include "message.h"
 #include "mdisp.h"
 
-using namespace faeutil;
+using namespace funs;
 
 // This structure is passed to all functions that want a message name.
 // Ensures that (1) exclusive time is not wasted on hint calculation
