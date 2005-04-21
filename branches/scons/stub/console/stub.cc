@@ -26,7 +26,6 @@
 #ifdef HAVE_getopt
 # include <getopt.h>
 #endif
-#include <faeutil/faeutil.h>
 #include "stub.h"
 
 static const char *usage =
@@ -99,7 +98,7 @@ int main(int argc, char * const * argv)
 	argc -= optind;
 	argv += optind;
 
-	fprintf(stdout, "Parabellym loader v%d.%d.%d.%d (use the -? switch for usage info).\n", VERSION_NUM);
+	fprintf(stdout, "Parabellym loader v%s (use the -? switch for usage info).\n", VERSION);
 
 	if (para_core_init() != 0) {
 		fprintf(stderr, "Could not initialize the parabellym core.\n");

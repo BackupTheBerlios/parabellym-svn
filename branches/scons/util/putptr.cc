@@ -6,6 +6,8 @@
 
 #include "boif.h"
 
+namespace funs {
+
 void faeutil_putptr(void *to, void *value)
 {
 	long _value = reinterpret_cast<long>(value);
@@ -65,4 +67,6 @@ void * faeutil_getptrs(void **from, void **to)
 	void *rc = faeutil_getptr(*from, to);
 	*from = reinterpret_cast<void *>(reinterpret_cast<char *>(*from) + 4);
 	return rc;
+}
+
 }

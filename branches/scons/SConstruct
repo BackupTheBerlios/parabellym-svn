@@ -140,10 +140,10 @@ else:
 opts.Save('config.options', env)
 Export('env', 'fnd')
 
-SConscript(os.path.join('core', 'SConscript'))
+SConscript('core/SConscript')
 
-if env['modules'] == '1':
-	SConscript(os.path.join('mods', 'SConscript'))
+if env['modules'] == 1:
+	SConscript('mods/SConscript')
 
-if env['stubs'] == '1':
-	SConscript(os.path.join('stubs', 'SConscript'))
+if env['stubs'] == 1:
+	SConscript('stub/SConscript')

@@ -28,7 +28,7 @@ static bool phase1(const int msgid)
 	printf(" W < waiting for incoming messages.\n");
 
 	if ((rc = para_msg_receive(&mi)) < 0) {
-		if (rc == PEC_MOD_SIGNAL) {
+		if (rc == PEC_SIGNAL) {
 			printf(" W < received signal %d, exiting.\n", mi.signal);
 			return true;
 		}

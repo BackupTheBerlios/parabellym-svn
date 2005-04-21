@@ -6,6 +6,8 @@
 
 #include "boif.h"
 
+namespace funs {
+
 void faeutil_putint(void *to, unsigned int value)
 {
 	unsigned char *tmp = reinterpret_cast<unsigned char *>(to);
@@ -46,4 +48,6 @@ unsigned int faeutil_getints(void **from, unsigned int *to)
 	unsigned int rc = faeutil_getint(*from, to);
 	*from = reinterpret_cast<void *>(reinterpret_cast<char *>(*from) + 4);
 	return rc;
+}
+
 }

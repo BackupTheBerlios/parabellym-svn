@@ -12,6 +12,8 @@
 
 #include <stddef.h> /* for size_t */
 
+namespace funs {
+
 void faeutil_putshort(void *, unsigned short);
 unsigned short faeutil_getshort(void *, unsigned short *);
 void faeutil_putint(void *, unsigned int);
@@ -25,5 +27,9 @@ void faeutil_putints(void **, unsigned int);
 unsigned int faeutil_getints(void **, unsigned int *);
 void faeutil_putptrs(void **, void *);
 void * faeutil_getptrs(void **, void **);
+
+}
+
+using namespace funs;
 
 #endif /* __parabellym_util_boif_h */

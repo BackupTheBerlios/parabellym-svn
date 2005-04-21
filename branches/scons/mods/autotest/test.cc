@@ -16,13 +16,13 @@
 #else
 # include <unistd.h>
 #endif
-#include <faeutil/sem.h>
+#include "../../util/sem.h"
 #include "../../core/api.h"
 
 #define CHECK(cmd, pfx, cmt) if ((rc = cmd) != PEC_SUCCESS) printf(" " pfx " - error " cmt ": %s.\n", para_errstr(rc))
 
 static unsigned int children = 0;
-static faeutil::sem csem;
+static funs::sem csem;
 static const int sigend = 123;
 
 static void* slave(void *_qid)
@@ -108,7 +108,7 @@ void para_mod_body(int qid)
 	printf(" M - waiting for children to quit.\n");
 
 	while (true) {
-		faeutil::mlock lock(csem.mx);
+		funs::mlock lock(csem.mx);
 		if (children == 0) {
 			printf(" M - all children have quit.\n");
 			break;

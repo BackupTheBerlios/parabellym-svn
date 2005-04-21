@@ -6,6 +6,8 @@
 
 #include "boif.h"
 
+namespace funs {
+
 void faeutil_putshort(void *to, unsigned short value)
 {
 	unsigned char *tmp = reinterpret_cast<unsigned char *>(to);
@@ -42,4 +44,6 @@ unsigned short faeutil_getshorts(void **from, unsigned short *to)
 	unsigned short rc = faeutil_getshort(*from, to);
 	*from = reinterpret_cast<void *>(reinterpret_cast<char *>(*from) + 2);
 	return rc;
+}
+
 }

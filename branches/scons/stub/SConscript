@@ -1,0 +1,9 @@
+import os
+Import('env')
+
+envstub = env.Copy()
+envstub.Append(LIBPATH = '#/core', LIBS = 'parabellym')
+
+envstub.Program('pconsole', 'console/stub.cc')
+
+# vim:ts=2:sts=2:sw=2:noet:syntax=python

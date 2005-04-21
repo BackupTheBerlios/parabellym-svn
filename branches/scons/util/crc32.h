@@ -12,6 +12,12 @@
 
 #include <stddef.h>
 
+namespace funs {
+
 unsigned int crc32(const void *, size_t);
+
+}
+
+using namespace funs;
 
 #endif /* __parabellym_util_crc32_h */

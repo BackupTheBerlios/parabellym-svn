@@ -1,0 +1,16 @@
+import os
+Import('env', 'fnd')
+
+envmod = env.Copy()
+envmod.Append(LIBPATH = '#/core', LIBS = 'parabellym', CPPDEFINES = [('funs', 'funsmod')])
+
+for mod in ['autotest', 'test-send', 'test-wait']:
+	objs = []
+
+	for item in fnd.listFiles([mod, '../util'], r'^.*(\.cc)$'):
+		fname, ext = os.path.splitext(item)
+		objs.append(envmod.SharedObject(fname + '.om', item))
+
+	envmod.SharedLibrary(mod, objs)
+
+# vim:ts=2:sts=2:sw=2:noet:syntax=python

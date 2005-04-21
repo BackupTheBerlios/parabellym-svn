@@ -4,6 +4,8 @@
 
 #include "crc32.h"
 
+namespace funs {
+
 static const unsigned int crc32_tab[] = {
 	0x00000000U, 0x77073096U, 0xee0e612cU, 0x990951baU, 0x076dc419U,
 	0x706af48fU, 0xe963a535U, 0x9e6495a3U, 0x0edb8832U, 0x79dcb8a4U,
@@ -69,4 +71,6 @@ unsigned int crc32(const void *src, size_t size)
 		sum = crc32_tab[(sum ^ str[i]) & 0xff] ^ (sum >> 8);
 
 	return sum;
+}
+
 }
