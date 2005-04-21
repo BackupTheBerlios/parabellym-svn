@@ -50,7 +50,7 @@ static void phase2(para_msgi_t &mi)
 		printf(" S > sending failed with error %d (%s).\n", rc, para_errstr(rc));
 	else {
 		if (mi.attc)
-			printf(" S > response: attc=%u, tex=\"%s\".\n", mi.attc, reinterpret_cast<char *>(mi.attv[0].data));
+			printf(" S > response: attc=%u, tex=\"%s\".\n", mi.attc, mi.attv[0].as_str());
 		else
 			printf(" S > response: empty.\n");
 	}
@@ -72,7 +72,7 @@ static void phase3(para_msgi_t &mi)
 		printf(" S > sending failed with error %d (%s; %d).\n", rc, para_errstr(rc), mi.msgid);
 	else {
 		if (mi.attc)
-			printf(" S > response: attc=%u, tex=\"%s\".\n", mi.attc, reinterpret_cast<char *>(mi.attv[0].data));
+			printf(" S > response: attc=%u, tex=\"%s\".\n", mi.attc, mi.attv[0].as_str());
 		else
 			printf(" S > response: empty.\n");
 	}
