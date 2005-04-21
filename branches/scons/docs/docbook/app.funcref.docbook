@@ -1,0 +1,591 @@
+<title>Function reference</title>
+	<section id="para_core_init">
+		<title>para_core_init</title>
+		<para>Initializes the library.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_core_init(void);</programlisting>
+		<formalpara><title>Access</title></formalpara>
+		<para>Restricted to the loader.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function should be called to initialise the environment before module, message or signal related functions are called.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					The library was successfully initialized.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_core_shutdown">
+		<title>para_core_shutdown</title>
+		<para>Uninitialises the library.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_core_shutdown(int flags);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>flags</varname></term>
+				<listitem>
+					<para>One of the following values:</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								<constant>PUC_NORMAL</constant> &emdash; attempt to shut down immediately.
+								If modules are loaded, reports an error.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<constant>PUC_WAIT</constant> &emdash; wait until all modules unload, then shut down the library.
+								This function is normally called after all modules are loaded.
+								This function is expected to always succeed.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<constant>PUC_EMERGENCY</constant> &emdash; unload all modules, then shut down the library.
+								With this option all modules receive a <constant>PSIG_UNLOAD</constant> signal which tells them to gracefully unload.
+								Otherwise this mode is similar to <constant>PUC_WAIT</constant>.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Restricted to the loader.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function lets the system loader to gracefully unload modules and shut the system down.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					The library was shut down.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_HAVE_MODULES</constant></term>
+				<listitem>
+					There are active modules (returned when <varname>flags</varname> is <constant>PUC_NORMAL</constant>).
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_errstr">
+		<title>para_errstr</title>
+		<para>Returns an error message.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+const char * para_errstr(int code);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>code</varname></term>
+				<listitem>The code of the error, a negative value returned by any other library function.</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para> Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			Returns a message that verbally describes the error.
+			The returned messages are short descriptions in English.
+			Note that the returned string is constant; never attempt to release or modify it.
+		</para>
+	</section>
+
+	<section id="para_mod_body">
+		<title>para_mod_body</title>
+		<para>Module body.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+void para_mod_body(int qid);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>qid</varname></term>
+				<listitem>
+					<para>
+						The identifier of the queue to which the current thread is attached.
+						For use with <link linkend="para_mod_signal"><function>para_mod_signal</function></link> and <link linkend="para_msg_attach"><function>para_msg_attach</function></link>.
+					</para>
+					<para>
+						This value should not be made available to other modules.
+						Knowing this value gives a different module the ability to hijack messages.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function implements the life cycle of a module.
+			The function is executed after the module is loaded into the system.
+			When the function returns, the module is unloaded from the system and the main module thread quits.
+			Additional threads spawned by the module must be manually shut down before exiting; continuing to execute code from an unloaded library will result in errors fatal for the environment.
+		</para>
+	</section>
+
+	<section id="para_mod_load">
+		<title>para_mod_load</title>
+		<para>Loads a module.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_mod_load(const char *fname);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>fname</varname></term>
+				<listitem>
+					The name of the file with the module.
+					Either absolute or relative to the process' working directory.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Restricted to the loader.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function tells the system to load the specified module.
+			Modules can be loaded multiple times.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>The module was installed.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MOD_NOT_LOADED</constant></term>
+				<listitem>Could not read the specified file.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MOD_ENTRY_MISSING</constant></term>
+				<listitem>The specified file does not have an <link linkend="para_mod_body"><function>para_mod_body</function></link> function.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MOD_FAILED</constant></term>
+				<listitem>Unknown error.</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_mod_signal">
+		<title>para_mod_signal</title>
+		<para>Signalize a module.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_mod_signal(int qid, int signal);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>qid</varname></term>
+				<listitem>
+					The identifier of the message queue, received by <link linkend="para_mod_body"><function>para_mod_body</function></link>.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><varname>signal</varname></term>
+				<listitem>
+					A custom signal code.
+					Negative values are reserved for system use (e.g., <constant>PSIG_UNLOAD</constant>).
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function is intended to be used inside a module to coordinate threads.
+		</para>
+		<para>
+			Sends a signal to the specified queue.
+			Unlike regular messages, signals are delivered to the sender as well.
+			Signals have a greater priority than regular messages.
+			The <link linkend="para_msg_receive"><function>para_msg_receive</function></link> function first retreives signals, if any, then messages.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>The signal was sent.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSGQ_BAD_ID</constant></term>
+				<listitem>An invalid queue identifier was used.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_UNAUTHORIZED</constant></term>
+				<listitem>An attempt to send a restricted signal, such as <constant>PSIG_UNLOAD</constant>, was made.</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_attach">
+		<title>para_msg_attach</title>
+		<para>Finds a message by its name.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_attach(int qid);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>qid</varname></term>
+				<listitem>
+					The identifier of the message queue to attach to.
+					This is the value passed to a module's <link linkend="para_mod_body"><function>para_mod_body</function></link> function.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function attaches the current thread to a new message queue.
+			Previously attached queue, if any, is detached from the current thread.
+		</para>
+		<para>
+			A module's main thread is attached to a separate message queue by default.
+			Additional threads can be attached to it to make a multithreaded module.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					There specified queue was successfully attached to the current thread.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSGQ_BAD_ID</constant></term>
+				<listitem>
+					There is no message queue with such id.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_find">
+		<title>para_msg_find</title>
+		<para>Finds a message by its name.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+		
+int para_msg_find(const char *name);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>name</varname></term>
+				<listitem>This is the name of the message.  It must not exceed 64 characters including the terminating nul character, otherwise it will be truncated.  Case sensitive.</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function finds a registered message with the specified name.
+			Messages become registered when at least one module subscribes for them (see <link linkend="para_msg_subscribe"><function>para_msg_subscribe</function></link> for details).
+			If a message with the requested name is not registered, the function fails.
+		</para>
+		<para>
+			It is recommended that message names are built in a pseudo-hierarchical manner, e.g.: "oss.faerion.parabellym.general.unload".
+		</para>
+		<para>
+			This function is only suitable for a limited range of cases, because it is a subject to a race condition (the message id may become invalid before you actually use it).
+			Normally, if you plan to send a message somewhat often, it is more appropriate to subscribe for it; this guarantees that the message id will not change (note that the module doesn't receive messages it sends).
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<para>
+			A positive return value is the message identifier, a negative value is an error code from the Errors section below.
+		</para>
+		<para>
+			Message codes have built-in reuse control.
+			The same message, if re-registered, will not be assigned the same identifier.
+			This means that while there is no guarantee that the message remains in use, the identifier better not be stored.
+		</para>
+		<formalpara><title>Return values</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_MSG_NOT_FOUND</constant></term>
+				<listitem>The message with the specified name is not known.</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_receive">
+		<title>para_msg_receive</title>
+		<para>Waits until an incoming message is available.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_receive(<link linkend="para_msgi_t">para_msgi_t</link> *info);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>info</varname></term>
+				<listitem>Receives information about the received message.</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			Call this functon to wait for new messages and receive them.
+			The calling thread will block until a message or a signal is received.
+		</para>
+		<para>
+			A typical module's main thread spends the most of its time waiting in this call, which looks like this:
+		</para>
+		<programlisting>para_msgi_t info;
+
+while (true) {
+	switch (para_msg_receive(&amp;info)) {
+	case PEC_SUCCESS:
+		// process the message...
+		break;
+	case PEC_MOD_SIGNAL:
+		if (info.sig == PSIG_UNLOAD)
+			return;
+		// do additional work...
+		break;
+	}
+};</programlisting>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					A message was successfully retreived.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSGQ_BAD_ID</constant></term>
+				<listitem>
+					The current thread is not attached to a message queue, see <link linkend="para_msg_attach"><function>para_msg_attach</function></link>.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MOD_SIGNAL</constant></term>
+				<listitem>
+					The thread was unblocked by demand of another thread.
+					The application-specific code with which the thread was awaken is stored in the <varname>signal</varname> member of the <varname>info</varname> structure.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_reply">
+		<title>para_msg_reply</title>
+		<para>Replies to the last received message.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_reply(const <link linkend="para_msgi_t">para_msgi_t</link> *info);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>info</varname></term>
+				<listitem>Description of the response.  Only <varname>attc</varname> and <varname>attv</varname> members are used.</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			Replies to the sender of the last received message.
+			This function should only be used if the <varname>rreq</varname> member of the last received message's description block was set to <constant>true</constant>.
+		</para>
+		<para>
+			The library automatically sends an empty response if the thread refuses to reply and attempts to receive the next message or if the thread exits.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					A response was sent.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSGQ_BAD_ID</constant></term>
+				<listitem>
+					The current thread is not attached to a message queue, see <link linkend="para_msg_attach"><function>para_msg_attach</function></link>.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSG_BAD_ID</constant></term>
+				<listitem>
+					<para>The message had not yet been received.</para>
+					<para>The message had already been replied.</para>
+					<para>The message does not require a response.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_send">
+		<title>para_msg_send</title>
+		<para>Sends a message to subscribed modules.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_send(<link linkend="para_msgi_t">para_msgi_t</link> *info);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>info</varname></term>
+				<listitem>The description of the message.</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			The <function>para_msg_send</function> function delivers data to one or more modules.
+			The data passed with the message is copied to each module's incoming message queue and may be safely changed after this function returns.
+			If the message does not require a response, the function returns immediately.
+		</para>
+		<para>
+			If the <varname>rreq</varname> member of the <varname>info</varname> block is not set, the message is delivered to all subscribed modules.
+			Otherwise the message is only delivered to the first subscribed module and the function blocks until the module processes the message and replies.
+			When the function unblocks, the <varname>attc</varname> and <varname>attv</varname> members of the <varname>info</varname> block describe the data with which the receiving module had replied.
+			(The data is valid until the next call to the library and must be copied to the module's own memory space.)
+		</para>
+		<para>
+			When a response arrives, members <varname>attc</varname> and <varname>attv</varname> described the data with which the remote module replied; this data must not be deallocated by the module.
+		</para>
+		<para>
+			A module will not receive messages it sends.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>The message was successfully sent.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSG_BAD_ID</constant></term>
+				<listitem>Invalid message identifier was used.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSG_NO_RECIPIENT</constant></term>
+				<listitem>
+					The message required a response but there were no recipients.
+					This actually means that the calling module is the only module subscribed to the message.
+					Otherwise <constant>PEC_MSG_BAD_ID</constant> would be reported.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_subscribe">
+		<title>para_msg_subscribe</title>
+		<para>Subscribes to a message.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_subscribe(const char *name);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>name</varname></term>
+				<listitem>
+					This is the name of the message.
+					See <link linkend="para_msg_find"><function>para_msg_find</function></link> for details.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Restricted to the main module thread.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This function subscribes the current thread's message queue for a message with the specified name.
+			Subscribing for messages is also a way to fix their id and avoid using <link linkend="para_msg_find"><function>para_msg_find</function></link>; modules do not receive messages they send, so the incoming queue will not be polluted.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<para>
+			Normally, the function returns a positive identifier of the message with the specified name.
+			Other possible values:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_MOD_REQUIRED</constant></term>
+				<listitem>
+					The function was called outside a module's main thread.
+					This is not allowed.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section id="para_msg_unsubscribe">
+		<title>para_msg_unsubscribe</title>
+		<para>Unsubscribes the module from a message.</para>
+		<formalpara><title>Synopsis</title></formalpara>
+		<programlisting>#include &lt;parabellym/api.h&gt;
+
+int para_msg_unsubscribe(int msgid);</programlisting>
+		<formalpara><title>Arguments</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><varname>msgid</varname></term>
+				<listitem>
+					Message identifier obtained by an earlier call to <link linkend="para_msg_subscribe"><function>para_msg_subscribe</function></link>.
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara><title>Access</title></formalpara>
+		<para>Unrestricted.</para>
+		<formalpara><title>Description</title></formalpara>
+		<para>
+			This functon removes a message from the current module's list of subscription.
+			The module will no longer receive the specified message.
+			When the last module unsubscribes from a message, it is unregistered and its numeric id will be different next time the message is located or subscribed for.
+		</para>
+		<para>
+			The module is automatically unsubscribed from all messages when the <link linkend="para_mod_body"><function>para_mod_body</function></link> function exits.
+		</para>
+		<formalpara><title>Return value</title></formalpara>
+		<variablelist>
+			<varlistentry>
+				<term><constant>PEC_SUCCESS</constant></term>
+				<listitem>
+					The message was removed from the current thread's message queue.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MOD_REQUIRED</constant></term>
+				<listitem>
+					The function was called outside a module's main thread.
+					This is not allowed.
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSG_BAD_ID</constant></term>
+				<listitem>An invalid message identifier was used.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><constant>PEC_MSG_FAILED</constant></term>
+				<listitem>The module is not subscribed to the specified message.</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>

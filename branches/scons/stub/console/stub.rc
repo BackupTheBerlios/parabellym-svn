@@ -1,0 +1,13 @@
+// Copyright (c) 2003 hex@faerion.oss and others.
+// See file LICENSE for details about usage and redistribution.
+//
+// $Id: stub.rc 1 2004-10-11 20:14:37Z hex $
+
+#define INTERNAL_NAME "parastub"
+#define ORIGINAL_FILENAME "parastub.dll"
+#define FILE_VERSION_NUM VERSION_NUM
+
+#define X0419_DESCRIPTION "Загрузчик системы Parabellym"
+#define X0409_DESCRIPTION "Parabellym system loader"
+
+#include "../../util/paramodule.rc"

@@ -1,0 +1,93 @@
+#!/bin/bash
+export FMWK_NAME="Parabellym"
+export FWMK_ID="pblm"
+export FMWK_VER="A"
+
+echo "-------------------------------------------------------------------"
+
+if [[ -d $FMWK_NAME.framework ]]; then
+    echo "removing old temporary file ..."
+    rm -rf $FMWK_NAME.framework
+fi
+
+echo "creating framework structure ..."
+mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Headers
+mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Resources
+
+echo "copying headers and libraries into framework ..."
+cp -f core/api.h $FMWK_NAME.framework/Versions/$FMWK_VER/Headers/
+cp -f core/libparabellym.dylib $FMWK_NAME.framework/Versions/$FMWK_VER/$FMWK_NAME
+cp -f LICENSE $FMWK_NAME.framework
+
+if [[ -r docs/docbook/html.out/index.html ]]; then
+    echo "copying documentation into framework ..."
+    mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Documentation
+    cp -f docs/docbook/html.out/* $FMWK_NAME.framework/Versions/$FMWK_VER/Documentation
+fi
+
+echo "creating necessary symlinks ..."
+ln -s $FMWK_VER $FMWK_NAME.framework/Versions/Current
+ln -s Versions/Current/Headers $FMWK_NAME.framework/Headers
+ln -s Versions/Current/Resources $FMWK_NAME.framework/Resources
+if [[ -d $FMWK_NAME.framework/Versions/$FMWK_VER/Documentation ]]; then
+    ln -s Versions/Current/Documentation $FMWK_NAME.framework/Documentation
+fi
+ln -s Versions/Current/$FMWK_NAME $FMWK_NAME.framework/$FMWK_NAME
+
+# framework plist
+echo "creating framework configuration property-list ..."
+cat > $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/Info.plist << _EOF_
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+<key>CFBundlePackageType</key><string>FMWK</string>
+<key>CSResourcesFileMapped</key><true/>
+<key>CFBundleDevelopmentRegion</key><string>Russian</string>
+<key>NSHumanReadableCopyright</key><string>(C) 2003-2004, The Faerion Team &lt;dev@forestnet.org&gt;</string>
+<key>CFBundleExecutable</key><string>$FMWK_NAME</string>
+<key>CFBundleName</key><string>$FMWK_NAME</string>
+<key>CFBundleGetInfoString</key><string>$PACK version $VERS</string>
+<key>CFBundleIdentifier</key><string>net.sourceforge.faerion.$PACK</string>
+<key>CFBundleSignature</key><string>$FWMK_ID</string>
+<key>CFBundleVersion</key><string>$VERS</string>
+<key>CFBundleShortVersionString</key><string>$VERS</string>
+_EOF_
+if [[ -d $FMWK_NAME.framework/Versions/$FMWK_VER/Documentation ]]; then
+    cat >> $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/Info.plist << _EOF_
+<key>CFBundleHelpBookFolder</key><string>Documentation</string>
+<key>CFBundleHelpBookName</key><string>index.html</string>
+_EOF_
+fi
+echo "</dict></plist>" >> $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/Info.plist
+
+# localized resource strings (these are in UCS-2, so iconv is required)
+if [[ -n $MDF_ICONV ]]; then
+	echo "creating localized configuration strings ..."
+
+	mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/English.lproj
+	echo "CFBundleGetInfoString = \"$PACK version $VERS\";" | iconv -f UTF-8 -t UCS-2 > $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/English.lproj/InfoPlist.strings
+
+	mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/Russian.lproj
+	echo "CFBundleGetInfoString = \"$PACK версия $VERS\";" | iconv -f UTF-8 -t UCS-2 > $FMWK_NAME.framework/Versions/$FMWK_VER/Resources/Russian.lproj/InfoPlist.strings
+fi
+
+echo "-------------------------------------------------------------------"
+if [[ -d /Library/Frameworks/$FMWK_NAME.framework ]]; then
+    echo "(!) removing old Framework ... (/Library/Frameworks/$FMWK_NAME.framework)"
+    rm -rf /Library/Frameworks/$FMWK_NAME.framework
+fi
+if [[ -d /Library/Frameworks/$FMWK_NAME.framework ]]; then
+    echo "--> FAILURE"
+    exit 1
+else
+    echo "(!) installing Framework ... (/Library/Frameworks/$FMWK_NAME.framework)"
+    mv -f $FMWK_NAME.framework /Library/Frameworks
+    if [[ -d /Library/Frameworks/$FMWK_NAME.framework ]]; then
+        echo "--> SUCCESS"
+    else
+        echo "--> FAILURE"
+        exit 1
+    fi
+fi
+
