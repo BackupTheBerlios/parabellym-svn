@@ -43,7 +43,7 @@ static bool phase1(const int msgid)
 	}
 
 	if (mi.attc > 0) {
-		printf(" W < message: attc=%u, rreq=%s, signal=%d, text=\"%s\".\n", mi.attc, mi.rreq ? "true" : "false", mi.signal, reinterpret_cast<char *>(mi.attv[0].data));
+		printf(" W < message: attc=%u, rreq=%s, signal=%d, text=\"%s\".\n", mi.attc, mi.rreq ? "true" : "false", mi.signal, mi.attv[0].as_str());
 		if (strcmp(reinterpret_cast<const char *>(mi.attv[0].data), "end") == 0)
 			quit = true;
 	} else {
