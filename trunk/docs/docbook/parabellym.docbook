@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//faerion.oss//DTD Modified DocBook XML V4.2//EN" "parabellym.dtd">
+<book id="parabellym" lang="en">
+	<bookinfo>
+		<title>Parabellym API</title>
+		<subtitle>Technical documentation</subtitle>
+		<authorgroup>
+			<author>
+				<othername>The Faerion Team</othername>
+			</author>
+		</authorgroup>
+
+		<keywordset>
+			<keyword>&product;</keyword>
+		</keywordset>
+
+		<abstract>
+			<para>&product; is an environment for building extensible modular applications.</para>
+		</abstract>
+	</bookinfo>
+
+	<chapter id="overview">
+		<title>Overview</title>
+		<para>
+			&product; is an environment for building modular applications of any kind.
+			The environment consists of a shared library, which provides module management and message based inter-module communication ("IMC") functions, and a loader.
+			Each module resides in a separate shared library, has a fixed entry function and runs in a separate thread.
+			The library implements sereval basic security measures that prevent certain actions which can lead to system instability.
+		</para>
+		<para>
+			The system comes with a default loader which is sufficient for building console applications and daemons.
+		</para>
+
+		<section id="modules">
+			<title>Modules</title>
+			<para>
+				A module is a shared library with a fixed entry function named <link linkend="para_mod_body"><function>para_mod_body</function></link>.
+				This function is executed in a separate thread after the module is loaded; when this function returns, the module is unloaded.
+			</para>
+			<para>
+				There is no way to force a module to unload.
+				Graceful module shutdown can be requested by sending a <constant>PSIG_UNLOAD</constant> <link linkend="para_mod_signal">signal</link>, however, modules can ignore it or delay the reaction.
+			</para>
+		</section>
+
+		<section id="messages">
+			<title>Messages</title>
+			<para>
+				The inter-module communication subsystem ("IMC") is partially inspired by the <ulink url="http://www.qnx.com">QNX</ulink> IPC.
+				Modules communicate to eachother by sending and receiving messages.  Each message has unique numeric identifier, assigned by the system, and a name, by which it can be located.
+				It can optionally have any number of binary attachments (parameters) and require a response.
+				The layout of attachments and response requirement are not bound to the message; a message can have a different set of attachments each time it is sent.
+			</para>
+			<para>
+				Modules subscribe to receive messages by calling the <link linkend="para_msg_subscribe"><function>para_msg_subscribe</function></link> function.
+				Multiple modules can subscribe to receive any particular message.
+				If a message requires a response, it is only delivered to the first module that subscribed for it, otherwise it is delivered to all modules that subscribed for it (the latter is referred to as "notification" later in this document).
+			</para>
+			<para>
+				There is a special type of urgent messages, called "signals", which never have parameters and need not be registered or subscribed to.
+				Signals have a greater priority than regular messages and are always retreived first.
+				The only useful data a signal is carrying is its identifier, a 32-bit integer.
+				Signals are intended to help coordinate threads of a single module, thus there is no special meaning in signal identifiers; they typically are internal enums.
+			</para>
+		</section>
+
+		<section id="errors">
+			<title>Error handling</title>
+			<para>
+				&product; does not use exceptions or any other error handling mechanism.
+				Return values of all functions indicate success or error conditions.
+				All error codes are defined in <filename class="header">&lt;parabellym/api.h&gt;</filename>.
+			</para>
+		</section>
+	</chapter>
+
+	<appendix id="typeref" label="T">
+		&apptyperef;
+	</appendix>
+
+	<appendix id="funcref" label="F">
+		<para>
+			This section documents functions exported by the library.
+			Basic security is implemented to prevent certain actions that can cause havoc to the system.
+			Some functions are restricted to certain threads: main module's thread or the loader thread.
+		</para>
+		&appfuncref;
+	</appendix>
+</book>

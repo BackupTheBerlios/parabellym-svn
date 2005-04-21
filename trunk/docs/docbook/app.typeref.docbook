@@ -1,0 +1,70 @@
+<title>Type and structure reference</title>
+<para>This section describes data types and structures which &product; and modules make use of.</para>
+
+<section id="para_iov_t">
+	<title>para_iov_t</title>
+	<para>This structure describes a single message attachment.</para>
+	<formalpara><title>Synopsis</title></formalpara>
+	<programlisting>#include &lt;parabellym/api.h&gt;
+	
+typedef struct para_iov_t
+{
+	void *addr;
+	size_t size;
+} para_iov_t;</programlisting>
+	<formalpara><title>Description</title></formalpara>
+	<para>The <type>para_iov_t</type> structure contains information about a single message attachment.  The members include:</para>
+	<variablelist>
+		<varlistentry>
+			<term><varname>addr</varname></term>
+			<term><varname>size</varname></term>
+			<listitem>Address and size, in bytes, of the block of data attached to a message.  The data <emphasis>must not</emphasis> contain pointers to memory locations intended to be used by the receiving module.  Refusing to follow this rule will lead to system failure in distributed environment, when modules do not share one memory space.</listitem>
+		</varlistentry>
+	</variablelist>
+	<para>In C++ mode, all members of this structure are initialized with zero or NULL values by default; in C mode all members must be explicitly initialized.</para>
+</section>
+
+<section id="para_msgi_t">
+	<title>para_msgi_t</title>
+	<para>Information about a message.</para>
+	<formalpara><title>Synopsis</title></formalpara>
+	<programlisting>#include &lt;parabellym/api.h&gt;
+	
+typedef struct para_msgi_t
+{
+	// message description
+	int msgid;
+	unsigned int attc;
+	<link linkend="para_iov_t">para_iov_t</link> *attv;
+	// other flags
+	bool rreq;
+	int signal;
+} para_msgi_t;</programlisting>
+	<formalpara><title>Description</title></formalpara>
+	<para>The <type>para_msgi_t</type> structure contains information about a message.  The members include:</para>
+	<variablelist>
+		<varlistentry>
+			<term><varname>msgid</varname></term>
+			<listitem>Message identifier, see <link linkend="para_msg_find"><function>para_msg_find</function></link>.</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term><varname>attc</varname></term>
+			<listitem>The number of attached data blocks.</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term><varname>attv</varname></term>
+			<listitem>Points to an array of attachment descriptors.</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term><varname>rreq</varname></term>
+			<listitem>Set this member to <constant>true</constant> to require the receiving module to reply.  If the module does not reply directly, the library automatically replies with an empty message.  See <link linkend="para_msg_reply"><function>para_msg_reply</function></link> for details.</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term><varname>signal</varname></term>
+			<listitem>
+				The code with which the call to <link linkend="para_msg_receive"><function>para_msg_receive</function></link> was unblocked.
+				See <link linkend="para_mod_signal"><function>para_mod_signal</function></link> for more information about signals.
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>

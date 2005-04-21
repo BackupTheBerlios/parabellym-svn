@@ -1,0 +1,14 @@
+// parafile: simple profile storage for Parabellym
+// Copyright (C) 2003 hex@faerion.oss and others.
+// See file LICENSE for details about usage and redistribution.
+//
+// $Id: test.rc 1 2004-10-11 20:14:37Z hex $
+
+#define INTERNAL_NAME "parafile"
+#define ORIGINAL_FILENAME "parafile.dll"
+#define FILE_VERSION_NUM VERSION_NUM
+
+#define X0419_DESCRIPTION "Модуль доступа к профилю приложения для Parabellym (использует системный реестр)"
+#define X0409_DESCRIPTION "Application profile interface for Parabellym (uses Windows registry)"
+
+#include "../../util/paramodule.rc"

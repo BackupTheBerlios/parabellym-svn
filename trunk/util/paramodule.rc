@@ -1,0 +1,113 @@
+// Copyright (C) 2003-2004 hex@faerion.oss and others.
+// See file LICENSE for details about usage and redistribution.
+//
+// $Id: paramodule.rc 1 2004-10-11 20:14:37Z hex $
+
+#include <winver.h>
+#include <winnt.h>
+
+#define PRODUCT_NAME "Parabellym"
+#define PRODUCT_VERSION_TXT "1.0"
+#define PRODUCT_VERSION_NUM 1,0,0,0
+#if !defined(INTERNAL_NAME) && defined(ORIGINAL_FILENAME)
+# define INTERNAL_NAME ORIGINAL_FILENAME
+#endif
+#ifdef _DEBUG
+# define FILE_FLAGS VS_FF_DEBUG
+#else
+# define FILE_FLAGS 0x0L
+#endif
+
+#if !defined(X0419_DISTRIBUTION)
+# define X0419_DISTRIBUTION "Доступно по адресу http://faerion.sourceforge.net/"
+#endif
+#if !defined(X0409_DISTRIBUTION)
+# define X0409_DISTRIBUTION "Available at http://faerion.sourceforge.net/"
+#endif
+
+#if !defined(FILE_VERSION_TXT)
+# define FILE_VERSION_TXT "undefined"
+#endif
+
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION FILE_VERSION_NUM
+  PRODUCTVERSION PRODUCT_VERSION_NUM
+  FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+  FILEFLAGS FILE_FLAGS
+  FILEOS VOS_NT
+  FILETYPE VFT_DLL
+  FILESUBTYPE VFT2_UNKNOWN
+  {
+    BLOCK "StringFileInfo"
+    {
+      BLOCK "041904b0"
+      {
+        VALUE "CompanyName", "The Faerion Team (faerion.oss)"
+#ifdef X0419_COMMENTS
+        VALUE "Comments", X0419_COMMENTS
+#endif
+#ifdef X0419_DESCRIPTION
+        VALUE "FileDescription", X0419_DESCRIPTION
+#endif
+        VALUE "FileVersion", FILE_VERSION_TXT
+        VALUE "InternalName", INTERNAL_NAME
+        VALUE "LegalCopyright", "Copyright © 2003-2004 The Faerion Team"
+        VALUE "OriginalFilename", ORIGINAL_FILENAME
+        VALUE "ProductName", PRODUCT_NAME
+        VALUE "ProductVersion", PRODUCT_VERSION_TXT
+	VALUE "Распространение", X0419_DISTRIBUTION
+#ifdef X0419_LICENSE
+	VALUE "Лицензия", X0419_LICENSE
+#endif
+      }
+    }
+    BLOCK "VarFileInfo"
+    {
+      VALUE "Translation", 0x419, 1200
+    }
+  }
+
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_SYS_DEFAULT
+#pragma code_page(1251)
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION FILE_VERSION_NUM
+  PRODUCTVERSION PRODUCT_VERSION_NUM
+  FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+  FILEFLAGS FILE_FLAGS
+  FILEOS VOS_NT
+  FILETYPE VFT_DLL
+  FILESUBTYPE VFT2_UNKNOWN
+  {
+    BLOCK "StringFileInfo"
+    {
+      BLOCK "040904b0"
+      {
+        VALUE "CompanyName", "The Faerion Team (faerion.oss)"
+#ifdef X0409_COMMENTS
+        VALUE "Comments", X0409_COMMENTS
+#endif
+#ifdef X0409_DESCRIPTION
+        VALUE "FileDescription", X0409_DESCRIPTION
+#endif
+        VALUE "FileVersion", FILE_VERSION_TXT
+        VALUE "InternalName", INTERNAL_NAME
+        VALUE "LegalCopyright", "Copyright © 2003-2004 The Faerion Team"
+        VALUE "OriginalFilename", ORIGINAL_FILENAME
+        VALUE "ProductName", PRODUCT_NAME
+        VALUE "ProductVersion", PRODUCT_VERSION_TXT
+	VALUE "Distribution", X0409_DISTRIBUTION
+#ifdef X0409_LICENSE
+	VALUE "License", X0409_LICENSE
+#endif
+      }
+    }
+    BLOCK "VarFileInfo"
+    {
+      VALUE "Translation", 0x409, 1200
+    }
+  }

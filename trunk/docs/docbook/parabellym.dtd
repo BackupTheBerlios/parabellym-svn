@@ -1,0 +1,5 @@
+<!ENTITY product "Parabellym">
+<!ENTITY sysmsg "parabellym">
+<!ENTITY appfuncref SYSTEM "app.funcref.docbook">
+<!ENTITY apptyperef SYSTEM "app.typeref.docbook">
+<!ENTITY emdash "–">

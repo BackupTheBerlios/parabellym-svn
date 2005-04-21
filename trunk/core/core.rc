@@ -1,0 +1,13 @@
+// Copyright (C) 2003 hex@faerion.oss and others.
+// See file LICENSE for details about usage and redistribution.
+//
+// $Id: core.rc 1 2004-10-11 20:14:37Z hex $
+
+#define INTERNAL_NAME "parafile"
+#define ORIGINAL_FILENAME "parafile.dll"
+#define FILE_VERSION_NUM VERSION_NUM
+
+#define X0419_DESCRIPTION "ядро системы Parabellym"
+#define X0409_DESCRIPTION "Parabellym system core"
+
+#include "../util/paramodule.rc"
