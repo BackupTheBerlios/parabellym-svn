@@ -36,7 +36,9 @@
 #ifndef HAVE_daemon
 
 #ifndef _WIN32
-# include <ansidecl.h>
+# ifdef HAVE_ansidecl_h
+#  include <ansidecl.h>
+# endif
 # include <fcntl.h>
 # ifndef HAVE_paths_h
 #  define _PATH_DEVNULL "/dev/null"
