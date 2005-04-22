@@ -8,6 +8,7 @@
 #endif
 #include <string.h>
 #include "../util/crc32.h"
+#include "../util/fustring.h"
 #include "../util/stock.h"
 #include "api.h"
 #include "debug.h"

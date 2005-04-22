@@ -71,7 +71,7 @@ static bool phase1(const int msgid)
 }
 
 
-void para_mod_body(int)
+__pc_module para_mod_body(int)
 {
 	int msgid;
 

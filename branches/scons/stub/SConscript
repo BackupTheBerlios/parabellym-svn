@@ -1,9 +1,16 @@
 import os
-Import('env')
+Import('env', 'fnd')
 
 envstub = env.Copy()
 envstub.Append(LIBPATH = '#/core', LIBS = 'parabellym')
 
-envstub.Program('pconsole', 'console/stub.cc')
+objs = []
 
+for item in fnd.listFiles(['console', '../util'], r'^.*(\.cc)$'):
+	fname, ext = os.path.splitext(item)
+	objs.append(envstub.SharedObject(fname + '.stub.o', item))
+
+envstub.Program('pconsole', objs)
+
+# $Id$
 # vim:ts=2:sts=2:sw=2:noet:syntax=python

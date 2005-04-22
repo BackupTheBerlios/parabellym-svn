@@ -14,7 +14,9 @@
 #include <stddef.h>
 
 /* We need this for bool in C99 mode */
-#include <stdbool.h>
+#if !defined(__cplusplus)
+# include <stdbool.h>
+#endif
 
 /* We need strlen to assign strings to para_iov_t */
 #if defined(__cplusplus)
@@ -68,10 +70,12 @@ enum para_unload_mode
 #ifdef _WIN32
 # define __pc_export __declspec(dllexport)
 # define __pc_import __declspec(dllimport)
+# define __pc_module extern "C" __declspec(dllexport) void __stdcall
 #else
 # define __stdcall
 # define __pc_export
 # define __pc_import
+# define __pc_module extern "C" void
 #endif
 
 #ifdef __cplusplus
@@ -81,10 +85,9 @@ enum para_unload_mode
 #endif
 
 #ifdef PARA_BUILD_CORE
-# define PARA_API(type) __pc_ext type __stdcall __pc_export
+# define PARA_API(type) __pc_ext __pc_export type __stdcall
 #else
-# define PARA_API(type) __pc_ext type __stdcall __pc_import
-__pc_ext void __stdcall __pc_export para_mod_body(int qid);
+# define PARA_API(type) __pc_ext __pc_import type __stdcall
 #endif
 
 typedef struct para_iov_t

@@ -9,7 +9,7 @@ for mod in ['autotest', 'test-send', 'test-wait']:
 
 	for item in fnd.listFiles([mod, '../util'], r'^.*(\.cc)$'):
 		fname, ext = os.path.splitext(item)
-		objs.append(envmod.SharedObject(fname + '.om', item))
+		objs.append(envmod.SharedObject(fname + '.mod.o', item))
 
 	envmod.SharedLibrary(mod, objs)
 

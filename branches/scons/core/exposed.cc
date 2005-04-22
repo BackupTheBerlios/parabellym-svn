@@ -54,7 +54,7 @@ static mdisp* mod_restore(void)
 	return md;
 }
 
-const char * para_errstr(int id)
+PARA_API(const char *) para_errstr(int id)
 {
 	const char *msg = NULL;
 
@@ -71,57 +71,57 @@ const char * para_errstr(int id)
 	return msg;
 }
 
-int para_core_init(void)
+PARA_API(int) para_core_init(void)
 {
 	return mod_restore()->core_init();
 }
 
-int para_core_shutdown(enum para_unload_mode mode)
+PARA_API(int) para_core_shutdown(enum para_unload_mode mode)
 {
 	return mod_restore()->core_shutdown(mode);
 }
 
-int para_mod_load(const char *modname)
+PARA_API(int) para_mod_load(const char *modname)
 {
 	return mod_restore()->mod_load(modname);
 }
 
-int para_msg_attach(int qid)
+PARA_API(int) para_msg_attach(int qid)
 {
 	return mod_restore()->msg_attach(qid);
 }
 
-int para_msg_find(const char *msgname)
+PARA_API(int) para_msg_find(const char *msgname)
 {
 	return mod_restore()->msg_find(msgname);
 }
 
-int para_msg_receive(para_msgi_t *info)
+PARA_API(int) para_msg_receive(para_msgi_t *info)
 {
 	return mod_restore()->msg_receive(info);
 }
 
-int para_msg_reply(const para_msgi_t *info)
+PARA_API(int) para_msg_reply(const para_msgi_t *info)
 {
 	return mod_restore()->msg_reply(info);
 }
 
-int para_msg_send(para_msgi_t *info)
+PARA_API(int) para_msg_send(para_msgi_t *info)
 {
 	return mod_restore()->msg_send(info);
 }
 
-int para_msg_signal(int modid, int sig)
+PARA_API(int) para_msg_signal(int modid, int sig)
 {
 	return mod_restore()->msg_signal(modid, sig);
 }
 
-int para_msg_subscribe(const char *msgname)
+PARA_API(int) para_msg_subscribe(const char *msgname)
 {
 	return mod_restore()->msg_subscribe(msgname);
 }
 
-int para_msg_unsubscribe(int msgid)
+PARA_API(int) para_msg_unsubscribe(int msgid)
 {
 	return mod_restore()->msg_unsubscribe(msgid);
 }

@@ -20,13 +20,13 @@
 #include <string.h>
 #ifdef _WIN32
 # include <windows.h>
+# include <signal.h>
 #else
 # include <unistd.h>
 #endif
-#ifdef HAVE_getopt
-# include <getopt.h>
-#endif
 #include "stub.h"
+#include "../../util/daemon.h"
+#include "../../util/fugetopt.h"
 
 static const char *usage =
 	"Usage: parastub [OPTION]... [- [MODULE]...]\n"
@@ -139,7 +139,7 @@ int main(int argc, char * const * argv)
 			fprintf(stdout, "Press Ctrl+C to interrupt the program.\n");
 		}
 
-		snprintf(title, sizeof(title), "Parabellym, v%u.%u.%u.%u", VERSION_NUM);
+		snprintf(title, sizeof(title), "Parabellym, v%s", VERSION);
 		SetConsoleTitle(title);
 	}
 #else

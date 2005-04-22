@@ -96,7 +96,7 @@ static void phase4(para_msgi_t &mi)
 }
 
 
-void para_mod_body(int)
+__pc_module para_mod_body(int)
 {
 	para_msgi_t info;
 

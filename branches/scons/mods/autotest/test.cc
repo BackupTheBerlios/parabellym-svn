@@ -49,7 +49,7 @@ static void* slave(void *_qid)
 	}
 }
 
-void para_mod_body(int qid)
+__pc_module para_mod_body(int qid)
 {
 	pthread_t thread;
 

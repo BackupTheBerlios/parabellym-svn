@@ -7,7 +7,7 @@ objs = []
 
 for item in fnd.listFiles(['.', '../util'], r'^.*(\.cc)$'):
 	fname, ext = os.path.splitext(item)
-	objs.append(envcore.SharedObject(fname + '.os', item))
+	objs.append(envcore.SharedObject(fname + '.core.o', item))
 
 envcore.SharedLibrary('parabellym', objs)
 
