@@ -27,6 +27,17 @@ class Finder:
     l.sort()
     return l
 
+  def compile(self, env, paths):
+    objs = []
+    for item in self.listFiles(paths, r'^.*(\.cc)$'):
+      fname, ext = os.path.splitext(item)
+      if env.has_key('category'):
+        fname = fname + '.' + env['category']
+      if env['debug'] == 1:
+        fname = fname + '.debug'
+      objs.append(env.SharedObject(fname + '.o', item))
+    return objs
+
 # Version number.
 version = '1.0'
 
