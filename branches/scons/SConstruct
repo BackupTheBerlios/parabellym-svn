@@ -74,7 +74,7 @@ env = Environment(options = opts)
 if env['build_tool'] != 'default':
   env = Environment(tools = [env['build_tool']], options = opts)
 
-env.Append(CPPDEFINES = [('VERSION', version), ('SOEXT', '\\"' + env['SHLIBSUFFIX'] + '\\"')])
+env.Append(CPPDEFINES = [('VERSION', '\\"' + version + '\\"'), ('SOEXT', '\\"' + env['SHLIBSUFFIX'] + '\\"')])
 
 # Check the system configuration if we're not cleaning up.
 if env.GetOption('clean'):
