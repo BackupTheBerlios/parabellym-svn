@@ -75,7 +75,7 @@ else:
   if os.environ.has_key('CPATH'):
     for em in string.split(os.environ['CPATH'], ';'):
       env.Append(CPPPATH = em)
-      print 'Importing include directory %s from the environment.' % (em)
+      print 'Found directory %s in the environment.' % (em)
 #  if os.environ.has_key('LIBRARY_PATH'):
 #    for em in string.split(os.environ['LIBRARY_PATH'], ';'):
 #      env.Append(LIBPATH = em)
