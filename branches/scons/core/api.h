@@ -14,7 +14,7 @@
 #include <stddef.h>
 
 /* We need this for bool in C99 mode */
-#if !defined(__cplusplus)
+#if defined(HAVE_stdbool_h)
 # include <stdbool.h>
 #endif
 

@@ -119,6 +119,8 @@ else:
   if env['debug'] == 1:
     if conf.CheckLib('flog'):
       conf.env.Append(CPPDEFINES = 'HAVE_flog')
+  if conf.CheckCHeader('stdbool.h'):
+    conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
   if conf.CheckCHeader('ansidecl.h'):
     conf.env.Append(CPPDEFINES = 'HAVE_ansidecl_h')
 
