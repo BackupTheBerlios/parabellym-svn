@@ -4,6 +4,7 @@
 
 import os
 import re
+import shutil
 import string
 
 class Finder:
@@ -17,7 +18,7 @@ class Finder:
           if r.match(file):
             nodes.append(fname)
         elif os.path.isdir(fname):
-          if not fname == '.svn':
+          if not os.path.basename(fname) == '.svn':
             for more in self.listFilesW([fname], r):
               nodes.append(more)
     return nodes
@@ -37,6 +38,27 @@ class Finder:
         fname = fname + '~debug'
       objs.append(env.SharedObject(fname + '.o', item))
     return objs
+
+  def makeInstaller(self):
+    env = Environment(TARFLAGS = '-c -z')
+
+    dir = 'parabellym-' + version
+    tar = 'parabellym-' + version + '-src.tar.gz'
+
+    for item in self.listFiles(['.'], r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h))$'):
+      f = File(item)
+
+      src = f.path
+      dst = dir + '/' + os.path.dirname(f.path)
+      dsf = dir + '/' + f.path
+
+      if not os.path.exists(dst):
+        os.makedirs(dst)
+
+      shutil.copy2(src, dsf)
+      env.Tar(tar, dsf)
+
+    env.AddPostAction(tar, Delete(dir))
 
 # Version number.
 version = '1.0'
@@ -155,3 +177,5 @@ if env['modules'] == 1:
 
 if env['stubs'] == 1:
   SConscript('stub/SConscript')
+
+fnd.makeInstaller()
