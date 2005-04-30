@@ -6,7 +6,7 @@
 // The supervisor thread dispatcher.
 
 #include <string.h>
-#include <faeutil/sofunc.h>
+#include "../util/sofunc.h"
 #include "debug.h"
 #include "mdisp.h"
 #include "message.h"
@@ -62,8 +62,9 @@ int mdisps::mod_load(const char *name)
 		para_modbody_fn func = (para_modbody_fn)(os_getprocaddr(handle, funcs[idx]));
 
 		if (func != NULL) {
+			funs::sem ready;
 			pthread_t tmp;
-			mdispb *mod = new mdispb(func, handle);
+			mdispb *mod = new mdispb(func, handle, &ready);
 
 			if (pthread_create(&tmp, NULL, mdispb::bodyw, mod) != 0) {
 				log((flog, flMod, "could not spawn worker thread for module %s", name));

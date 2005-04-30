@@ -6,14 +6,14 @@
 #ifndef __parabellym_mdisp_h
 #define __parabellym_mdisp_h
 
-#include <faeutil/list.h>
-#include <faeutil/stock.h>
+#include "../util/list.h"
+#include "../util/stock.h"
 #include "api.h"
 #include "msgq.h"
 
 typedef void (__stdcall * para_modbody_fn)(int);
 
-extern faeutil::tlskey tlsk;
+extern funs::tlskey tlsk;
 
 // default function dispatcher class, provides limited access.
 class mdisp
@@ -31,7 +31,7 @@ protected:
 	// this packet stores a response.
 	msgp repd;
 	// this is signalled when a response is available.
-	faeutil::sem reps;
+	funs::sem reps;
 	// unblocks the thread that had sent us a message
 	// that required a response.
 	void unblock();
@@ -68,16 +68,18 @@ class mdispb : public mdisp
 	// module handle, used to unload the library.
 	void *handle;
 	// a list of loaded modules.
-	typedef faeutil::stock<mdispb *> stock_t;
+	typedef funs::stock<mdispb *> stock_t;
 	static stock_t stock;
 	// stock semaphore, signalled when a module is removed.
-	static faeutil::sem mrsem;
+	static funs::sem mrsem;
+	// Signalled when the module is about to enter the body.
+	funs::sem *onstart;
 protected:
 	// thread proc.
 	void body();
 public:
 	// initializers.
-	mdispb(para_modbody_fn func, void *handle);
+	mdispb(para_modbody_fn func, void *handle, funs::sem *s);
 	~mdispb();
 	// thread proc wrapper.
 	static void* bodyw(void *arg);

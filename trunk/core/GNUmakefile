@@ -5,8 +5,8 @@ include ../Makedefs.faerion.include
 
 TARGET = library.shared
 PROG   = libparabellym.$(MDF_SOEXT)
-SRCS  += $(wildcard *.cc)
-LIBS  += faeutil stdc++
+SRCS  += $(wildcard *.cc ../util/*.cc)
+LIBS  += stdc++
 EXPS   = exports
 DEFS  += PARA_BUILD_CORE VERSION_NUM="1,0,0,0" MODEXT=\"$(MDF_SOEXT)\"
 VERS   = 1.0

@@ -9,7 +9,7 @@
 //
 // $Id$
 
-#include <faeutil/sofunc.h>
+#include "sofunc.h"
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _WIN32

@@ -6,14 +6,12 @@
 // Message Queue implementation.  Read msgq.h for details.
 
 #include <string.h>
-#include <faeutil/stock.h>
-#include <faeutil/list.h>
+#include "../util/stock.h"
+#include "../util/list.h"
 #include "api.h"
 #include "debug.h"
 #include "msgq.h"
 #include "message.h"
-
-using namespace faeutil;
 
 // The main list of message queues.  Not exposed to outside.
 static stock<msgq::body *> qstock;

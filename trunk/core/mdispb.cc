@@ -4,22 +4,23 @@
 // $Id$
 
 #include <string.h>
-#include <faeutil/sofunc.h>
+#include "../util/sofunc.h"
 #include "debug.h"
 #include "mdisp.h"
 #include "message.h"
 
-faeutil::stock<mdispb *> mdispb::stock;
+funs::stock<mdispb *> mdispb::stock;
 
-faeutil::sem mdispb::mrsem;
+funs::sem mdispb::mrsem;
 
-mdispb::mdispb(para_modbody_fn f, void *h)
+mdispb::mdispb(para_modbody_fn f, void *h, funs::sem *s)
 {
 	blocked = NULL;
 	func = f;
 	handle = h;
 	queue.create();
 	id = stock.add(this);
+	onstart = s;
 }
 
 mdispb::~mdispb()
@@ -40,6 +41,9 @@ void* mdispb::bodyw(void *arg)
 void mdispb::body()
 {
 	tlsk.set(this);
+
+	if (onstart != NULL)
+		onstart->post();
 
 	log((flog, flMod, "%x: entering the body", this));
 	func(queue.get_id());
