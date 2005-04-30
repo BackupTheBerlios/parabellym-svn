@@ -14,6 +14,7 @@ using namespace funs;
 
 seml::seml()
 {
+	pcount = 0;
 	pthread_cond_init(&cv, NULL);
 }
 
@@ -29,7 +30,9 @@ bool seml::waitex(mutex &mx, bool locked)
 	bool rc;
 	if (!locked)
 		mx.enter();
-	rc = pthread_cond_wait(&cv, mx) ? true : false;
+	while (pcount == 0)
+		rc = pthread_cond_wait(&cv, mx) ? true : false;
+	--pcount;
 	if (!locked)
 		mx.leave();
 	return rc;
@@ -47,19 +50,38 @@ bool seml::wait(mutex &mx, const ftspec &ts)
 
 	{
 		mlock lock(mx);
-		errno = pthread_cond_timedwait(&cv, mx, &pts);
+		if (pcount == 0)
+			errno = pthread_cond_timedwait(&cv, mx, &pts);
+		else {
+			errno = 0;
+			pcount--;
+		}
 		return errno ? false : true;
 	}
 }
 
 
-bool seml::post()
+bool seml::post(mutex &mx, bool locked)
 {
-	return pthread_cond_signal(&cv) ? false : true;
+	bool rc;
+	if (!locked)
+		mx.enter();
+	if (rc = pthread_cond_signal(&cv) ? false : true)
+		pcount++;
+	if (!locked)
+		mx.leave();
+	return rc;
 }
 
 
-bool seml::broadcast()
+bool seml::broadcast(mutex &mx, bool locked)
 {
-	return pthread_cond_broadcast(&cv) ? false : true;
+	bool rc;
+	if (!locked)
+		mx.enter();
+	if (rc = pthread_cond_broadcast(&cv) ? false : true)
+		pcount++;
+	if (!locked)
+		mx.leave();
+	return rc;
 }

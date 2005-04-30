@@ -26,14 +26,16 @@ class ftspec;
 class seml
 {
 	pthread_cond_t cv;
+	// The number of times this seml was post()ed.
+	unsigned int pcount;
 public:
 	seml();
 	~seml();
 	bool waitex(mutex &mx, bool locked = false);
 	bool wait(mutex &mx) { return waitex(mx, false); }
 	bool wait(mutex &mx, const ftspec &ts);
-	bool broadcast();
-	bool post();
+	bool broadcast(mutex &mx, bool locked = false);
+	bool post(mutex &mx, bool locked = false);
 };
 
 
@@ -48,8 +50,8 @@ public:
 	bool wait() { return seml::wait(mx); }
 	bool wait(const ftspec &ts) { return seml::wait(mx, ts); }
 	bool waitex(bool locked = false) { return seml::waitex(mx, locked); }
-	bool broadcast() { return seml::broadcast(); }
-	bool post() { return seml::post(); }
+	bool broadcast() { return seml::broadcast(mx); }
+	bool post() { return seml::post(mx); }
 };
 
 }
