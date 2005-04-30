@@ -33,10 +33,10 @@ int para_core_load(const char *appname)
 {
 	int rc = PEC_INIT_FAILURE;
 
-	hInst = os_loadmod("libparabellym." MDF_SOEXT);
+	hInst = os_loadmod("libparabellym." MODEXT);
 
 	if (hInst == NULL)
-		hInst = os_loadmod("paracore." MDF_SOEXT);
+		hInst = os_loadmod("paracore." MODEXT);
 
 	if (hInst != NULL) {
 		para_core_init_fn fn = (para_core_init_fn)os_getprocaddr(hInst, init_func_name);
