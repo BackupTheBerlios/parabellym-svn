@@ -11,14 +11,14 @@ EXPS   = exports
 DEFS  += PARA_BUILD_CORE VERSION_NUM="1,0,0,0" MODEXT=\"$(MDF_SOEXT)\"
 VERS   = 1.0
 
-ifeq ($(MDF_OSNAME),NT)
+ifeq ($(OSNAME),nt)
   SRCS += core.rc
   LIBS += pthreadGCE
 else
   LIBS += pthread
 endif
 
-ifeq ($(MDF_OSNAME),Darwin)
+ifeq ($(OSNAME),darwin)
   MDF_LIBCMD += -install_name /Library/Frameworks/Parabellym.framework/Parabellym -compatibility_version $(VERS) -current_version $(VERS)
 endif
 
