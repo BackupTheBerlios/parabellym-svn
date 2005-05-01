@@ -36,12 +36,11 @@ int mdisps::core_shutdown(enum para_unload_mode mode)
 	log((flog, flGen, "%x: shutting down using mode %d", this, mode));
 
 	switch (mode) {
+	case PUC_EMERGENCY:
+		msgq::signal_bc(PSIG_UNLOAD, queue);
 	case PUC_WAIT:
 		mdispb::wait_unload();
 		log((flog, flGen, "all modules have quit, ja mata"));
-		return PEC_SUCCESS;
-	case PUC_EMERGENCY:
-		msgq::signal_bc(PSIG_UNLOAD, queue);
 		return PEC_SUCCESS;
 	default:
 		return PEC_HAVE_MODULES;
