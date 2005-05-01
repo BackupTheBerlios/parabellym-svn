@@ -1,12 +1,12 @@
 import os
-Import('env', 'fnd')
+Import('env', 'fae')
 
 envstub = env.Copy()
 envstub = env.Copy(
 	category = 'stub',
 	LIBPATH = '#/core',
 	LIBS = 'parabellym')
-envstub.Program('console/console', fnd.compile(envstub, ['console', '../util']))
+envstub.Program('console/console', fae.compile(envstub, ['console', '../util']))
 
 # $Id$
 # vim:ts=2:sts=2:sw=2:noet:syntax=python

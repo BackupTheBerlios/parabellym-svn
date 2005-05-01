@@ -1,67 +1,16 @@
 # SCons script for parabellym.
 # $Id$
-# vim:ts=2:sts=2:sw=2:et:nocindent:syntax=python
+# vim:ts=2:sts=2:sw=2:et:nocindent:ft=python
 
+import faerion
 import os
-import re
-import shutil
 import string
-
-class Finder:
-  # A function to list files in a directory.
-  def listFilesW(self, at, r):
-    nodes = []
-    for location in at:
-      for file in os.listdir(location):
-        fname = os.path.join(location, file)
-        if os.path.isfile(fname):
-          if r.match(file):
-            nodes.append(fname)
-        elif os.path.isdir(fname):
-          if not os.path.basename(fname) == '.svn':
-            for more in self.listFilesW([fname], r):
-              nodes.append(more)
-    return nodes
-
-  def listFiles(self, at, r):
-    l = self.listFilesW(at, re.compile(r))
-    l.sort()
-    return l
-
-  def compile(self, env, paths):
-    objs = []
-    for item in self.listFiles(paths, r'^.*(\.cc)$'):
-      fname, ext = os.path.splitext(item)
-      if env.has_key('category'):
-        fname = fname + '~' + env['category']
-      if env['debug'] == 1:
-        fname = fname + '~debug'
-      objs.append(env.SharedObject(fname + '.o', item))
-    return objs
-
-  def makeInstaller(self):
-    env = Environment(TARFLAGS = '-c -z')
-
-    dir = 'parabellym-' + version
-    tar = 'parabellym-' + version + '-src.tar.gz'
-
-    for item in self.listFiles(['.'], r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h))$'):
-      f = File(item)
-
-      src = f.path
-      dst = dir + '/' + os.path.dirname(f.path)
-      dsf = dir + '/' + f.path
-
-      if not os.path.exists(dst):
-        os.makedirs(dst)
-
-      shutil.copy2(src, dsf)
-      env.Tar(tar, dsf)
-
-    env.AddPostAction(tar, Delete(dir))
 
 # Version number.
 version = '1.0'
+
+# The helper object.
+fae = faerion.Build()
 
 Help("""
 Usage: scons [options]
@@ -72,6 +21,7 @@ The following options are available:
   release=yes : set when you are preparing a release package.
   modules=yes : build sample modules, too.
   stubs=yes   : build loaders, too.
+  srcdist=yes : build a source code tarball.
 
 Send your comments to Justin Forest <justin.forest@gmail.com>
 """)
@@ -79,13 +29,12 @@ Send your comments to Justin Forest <justin.forest@gmail.com>
 # The directory in which built files are stored.
 output_dir = 'build'
 
-fnd = Finder()
-
 # Build options.
 opts = Options('config.options')
 opts.Add(BoolOption('debug', 'Set to include debug symbols and output', False))
 opts.Add(BoolOption('modules', 'Set to build sample modules', False))
 opts.Add(BoolOption('stubs', 'Set to build sample stubs', False))
+opts.Add(BoolOption('scrdist', 'Set to build the source code tarball', False))
 opts.Add(BoolOption('release', 'Set this option only if you are preparing a release', False))
 opts.Add(EnumOption('build_tool', 'Override the build tool (for maintainers mostly)', 'default', allowed_values = ('default', 'mingw'), ignorecase = 1))
 
@@ -141,10 +90,10 @@ else:
   if env['debug'] == 1:
     if conf.CheckLib('flog'):
       conf.env.Append(CPPDEFINES = 'HAVE_flog')
-  if conf.CheckCHeader('stdbool.h'):
-    conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
   if conf.CheckCHeader('ansidecl.h'):
     conf.env.Append(CPPDEFINES = 'HAVE_ansidecl_h')
+  if conf.CheckCHeader('stdbool.h'):
+    conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
 
   env = conf.Finish()
 
@@ -168,7 +117,7 @@ else:
     env.Append(LINKFLAGS = '-s --gc-sections')
 
 opts.Save('config.options', env)
-Export('env', 'fnd')
+Export('env', 'fae')
 
 SConscript('core/SConscript')
 
@@ -178,4 +127,4 @@ if env['modules'] == 1:
 if env['stubs'] == 1:
   SConscript('stub/SConscript')
 
-fnd.makeInstaller()
+fae.makeInstaller(env, 'parabellym-' + version, r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h))$')

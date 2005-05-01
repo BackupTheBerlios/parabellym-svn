@@ -1,8 +1,8 @@
 import os
-Import('env', 'fnd')
+Import('env', 'fae')
 
 envcore = env.Copy()
 envcore.Append(CPPDEFINES = ['PARA_BUILD_CORE', ('funs', 'funspcore')], category = 'core')
-envcore.SharedLibrary('parabellym', fnd.compile(envcore, ['.', '../util']))
+envcore.SharedLibrary('parabellym', fae.compile(envcore, ['.', '../util']))
 
 # vim:ts=2:sts=2:sw=2:syntax=python

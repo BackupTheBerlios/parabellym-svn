@@ -1,5 +1,5 @@
 import os
-Import('env', 'fnd')
+Import('env', 'fae')
 
 envmod = env.Copy()
 envmod.Append(
@@ -9,6 +9,6 @@ envmod.Append(
 	CPPDEFINES = [('funs', 'funsmod')])
 
 for mod in ['autotest', 'test-send', 'test-wait']:
-	envmod.SharedLibrary(mod, fnd.compile(envmod, [mod, '../util']))
+	envmod.SharedLibrary(mod, fae.compile(envmod, [mod, '../util']))
 
 # vim:ts=2:sts=2:sw=2:noet:syntax=python
