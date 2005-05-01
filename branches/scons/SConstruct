@@ -1,10 +1,9 @@
 # SCons script for parabellym.
 # $Id$
-# vim:ts=2:sts=2:sw=2:et:nocindent:ft=python
+# vim:ts=4:sts=4:sw=4:et:nocindent:ft=python
 
 import faerion
 import os
-import string
 
 # Version number.
 version = '1.0'
@@ -43,78 +42,70 @@ env = Environment(options = opts)
 
 # Override the tool if there are many installed.
 if env['build_tool'] != 'default':
-  env = Environment(tools = [env['build_tool']], options = opts)
+	env = Environment(tools = [env['build_tool']], options = opts)
 
 env.Append(CPPDEFINES = [('VERSION', '\\"' + version + '\\"'), ('SOEXT', '\\"' + env['SHLIBSUFFIX'] + '\\"')])
 
 # Check the system configuration if we're not cleaning up.
 if env.GetOption('clean'):
-  print 'Skipping autoconfiguration due to a clean-up.'
+	print 'Skipping autoconfiguration due to a clean-up.'
 else:
-  print 'Configuring for platform: ' + env['PLATFORM'] + '.'
-  conf = Configure(env)
+	print 'Configuring for platform: ' + env['PLATFORM'] + '.'
+	conf = Configure(env)
+    fae.PreConf(env)
 
-  if os.environ.has_key('CPATH'):
-    for em in string.split(os.environ['CPATH'], ';'):
-      env.Append(CPPPATH = em)
-      print 'Found directory %s in the environment.' % (em)
-#  if os.environ.has_key('LIBRARY_PATH'):
-#    for em in string.split(os.environ['LIBRARY_PATH'], ';'):
-#      env.Append(LIBPATH = em)
-#      print 'Importing library directory %s from the environment.' % (em)
+	if not conf.CheckFunc('strlcpy'):
+		conf.env.Append(CPPDEFINES = 'strlcpy=strlcpy_local')
+	if not conf.CheckFunc('daemon'):
+		conf.env.Append(CPPDEFINES = 'daemon=daemon_local')
+	if conf.CheckFunc('getopt'):
+		conf.env.Append(CPPDEFINES = 'HAVE_getopt')
+	if env['PLATFORM'] == 'win32':
+		conf.env.Append(CPPDEFINES = 'WIN32_LEAN_AND_MEAN')
+	if env['PLATFORM'] == 'win32':
+		conf.CheckLib('user32')
+		if not conf.CheckLib(['pthreadGC2', 'pthreadVC2', 'pthreadGC', 'pthreadVC', 'pthread']):
+			print 'You must have the pthread library installed.'
+			Exit(1)
+		if not conf.CheckFunc('snprintf'):
+			if conf.CheckFunc('_snprintf'):
+				conf.env.Append(CPPDEFINES = 'snprintf=_snprintf')
+			else:
+				print 'The snprintf() function is not avaialble (very unusual).'
+				Exit(1)
+	else:
+		# POSIX specific.
+		if not conf.CheckLib('pthread'):
+			print 'You must have the pthread library installed.'
+			Exit(1)
+	if env['debug'] == 1:
+		if conf.CheckLib('flog'):
+			conf.env.Append(CPPDEFINES = 'HAVE_flog')
+	if conf.CheckCHeader('ansidecl.h'):
+		conf.env.Append(CPPDEFINES = 'HAVE_ansidecl_h')
+	if conf.CheckCHeader('stdbool.h'):
+		conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
 
-  if not conf.CheckFunc('strlcpy'):
-    conf.env.Append(CPPDEFINES = 'strlcpy=strlcpy_local')
-  if not conf.CheckFunc('daemon'):
-    conf.env.Append(CPPDEFINES = 'daemon=daemon_local')
-  if conf.CheckFunc('getopt'):
-    conf.env.Append(CPPDEFINES = 'HAVE_getopt')
-  if env['PLATFORM'] == 'win32':
-    conf.env.Append(CPPDEFINES = 'WIN32_LEAN_AND_MEAN')
-  if env['PLATFORM'] == 'win32':
-    conf.CheckLib('user32')
-    if not conf.CheckLib(['pthreadGC2', 'pthreadVC2', 'pthreadGC', 'pthreadVC', 'pthread']):
-      print 'You must have the pthread library installed.'
-      Exit(1)
-    if not conf.CheckFunc('snprintf'):
-      if conf.CheckFunc('_snprintf'):
-        conf.env.Append(CPPDEFINES = 'snprintf=_snprintf')
-      else:
-        print 'The snprintf() function is not avaialble (very unusual).'
-        Exit(1)
-  else:
-    # POSIX specific.
-    if not conf.CheckLib('pthread'):
-      print 'You must have the pthread library installed.'
-      Exit(1)
-  if env['debug'] == 1:
-    if conf.CheckLib('flog'):
-      conf.env.Append(CPPDEFINES = 'HAVE_flog')
-  if conf.CheckCHeader('ansidecl.h'):
-    conf.env.Append(CPPDEFINES = 'HAVE_ansidecl_h')
-  if conf.CheckCHeader('stdbool.h'):
-    conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
-
-  env = conf.Finish()
+	env = conf.Finish()
 
 # Adapt to a debug build.
 if env['debug'] == 1:
-  print '*** DEBUG BUILD ***'
-  env.Append(CPPDEFINES = '_DEBUG')
-  if env['CC'] == 'cl':
-    env.Append(CCFLAGS = '/Od /GX /EHsc /MDd /Z7')
-    env.Append(LINKFLAGS = '/DEBUG /OPT:NOICF /OPT:NOREF')
-  elif env['CC'] == 'gcc':
-    env.Append(CCFLAGS = '-g -O0')
+	print '*** DEBUG BUILD ***'
+	env.Append(CPPDEFINES = '_DEBUG')
+	if env['CC'] == 'cl':
+		env.Append(CCFLAGS = '/Od /GX /EHsc /MDd /Z7')
+		env.Append(LINKFLAGS = '/DEBUG /OPT:NOICF /OPT:NOREF')
+	elif env['CC'] == 'gcc':
+		env.Append(CCFLAGS = '-g -O0')
 
 # Adapt to a release build.
 else:
-  if env['CC'] == 'cl':
-    env.Append(CCFLAGS = '/Ox /G5 /GF /Gy /MD')
-    env.Append(LINKFLAGS = '/RELEASE /OPT:REF /OPT:ICF')
-  elif env['CC'] == 'gcc':
-    env.Append(CCFLAGS = '-O3 -fomit-frame-pointer -finline-functions -fno-exceptions')
-    env.Append(LINKFLAGS = '-s --gc-sections')
+	if env['CC'] == 'cl':
+		env.Append(CCFLAGS = '/Ox /G5 /GF /Gy /MD')
+		env.Append(LINKFLAGS = '/RELEASE /OPT:REF /OPT:ICF')
+	elif env['CC'] == 'gcc':
+		env.Append(CCFLAGS = '-O3 -fomit-frame-pointer -finline-functions -fno-exceptions')
+		env.Append(LINKFLAGS = '-s --gc-sections')
 
 opts.Save('config.options', env)
 Export('env', 'fae')
@@ -122,9 +113,9 @@ Export('env', 'fae')
 SConscript('core/SConscript')
 
 if env['modules'] == 1:
-  SConscript('mods/SConscript')
+	SConscript('mods/SConscript')
 
 if env['stubs'] == 1:
-  SConscript('stub/SConscript')
+	SConscript('stub/SConscript')
 
-fae.makeInstaller(env, 'parabellym-' + version, r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h))$')
+fae.makeInstaller(env, '.', 'parabellym-' + version, r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h|py))$')
