@@ -50,9 +50,7 @@ env.Append(CPPDEFINES = [('VERSION', '\\"' + version + '\\"'), ('SOEXT', '\\"' +
 if env.GetOption('clean'):
 	print 'Skipping autoconfiguration due to a clean-up.'
 else:
-	print 'Configuring for platform: ' + env['PLATFORM'] + '.'
-	conf = Configure(env)
-    fae.PreConf(env)
+    conf = fae.Configure(Configure(env), env)
 
 	if not conf.CheckFunc('strlcpy'):
 		conf.env.Append(CPPDEFINES = 'strlcpy=strlcpy_local')
@@ -86,8 +84,7 @@ else:
 	if conf.CheckCHeader('stdbool.h'):
 		conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
 
-	env = conf.Finish()
-    fae.FixBuildType(env)
+    env = fae.FinishConf(conf)
 
 opts.Save('config.options', env)
 Export('env', 'fae')
