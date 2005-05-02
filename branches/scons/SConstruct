@@ -9,7 +9,7 @@ import os
 version = '1.0'
 
 # The helper object.
-fae = faerion.Build()
+fae = faerion.Faerion()
 
 Help("""
 Usage: scons [options]
@@ -87,25 +87,7 @@ else:
 		conf.env.Append(CPPDEFINES = 'HAVE_stdbool_h')
 
 	env = conf.Finish()
-
-# Adapt to a debug build.
-if env['debug'] == 1:
-	print '*** DEBUG BUILD ***'
-	env.Append(CPPDEFINES = '_DEBUG')
-	if env['CC'] == 'cl':
-		env.Append(CCFLAGS = '/Od /GX /EHsc /MDd /Z7')
-		env.Append(LINKFLAGS = '/DEBUG /OPT:NOICF /OPT:NOREF')
-	elif env['CC'] == 'gcc':
-		env.Append(CCFLAGS = '-g -O0')
-
-# Adapt to a release build.
-else:
-	if env['CC'] == 'cl':
-		env.Append(CCFLAGS = '/Ox /G5 /GF /Gy /MD')
-		env.Append(LINKFLAGS = '/RELEASE /OPT:REF /OPT:ICF')
-	elif env['CC'] == 'gcc':
-		env.Append(CCFLAGS = '-O3 -fomit-frame-pointer -finline-functions -fno-exceptions')
-		env.Append(LINKFLAGS = '-s --gc-sections')
+    fae.FixBuildType(env)
 
 opts.Save('config.options', env)
 Export('env', 'fae')
@@ -118,4 +100,5 @@ if env['modules'] == 1:
 if env['stubs'] == 1:
 	SConscript('stub/SConscript')
 
-fae.makeInstaller(env, '.', 'parabellym-' + version, r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h|py))$')
+if env['release'] == 1:
+    fae.makeInstaller(env, '.', 'parabellym-' + version, r'^(SCons.*|LICENSE|.*\.(cc|css|docbook|h|py))$')

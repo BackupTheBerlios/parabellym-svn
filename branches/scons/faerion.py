@@ -47,6 +47,26 @@ class Faerion:
 			objs.append(env.SharedObject(fname + '.o', item))
 		return objs
 
+	def FixBuildType(self, env):
+		# Adapt to a debug build.
+		if env['debug'] == 1:
+			print '*** DEBUG BUILD ***'
+			env.Append(CPPDEFINES = '_DEBUG')
+			if env['CC'] == 'cl':
+				env.Append(CCFLAGS = '/Od /GX /EHsc /MDd /Z7')
+				env.Append(LINKFLAGS = '/DEBUG /OPT:NOICF /OPT:NOREF')
+			elif env['CC'] == 'gcc':
+				env.Append(CCFLAGS = '-g -O0')
+
+		# Adapt to a release build.
+		else:
+			if env['CC'] == 'cl':
+				env.Append(CCFLAGS = '/Ox /G5 /GF /Gy /MD')
+				env.Append(LINKFLAGS = '/RELEASE /OPT:REF /OPT:ICF')
+			elif env['CC'] == 'gcc':
+				env.Append(CCFLAGS = '-O3 -fomit-frame-pointer -finline-functions -fno-exceptions')
+				env.Append(LINKFLAGS = '-s --gc-sections')
+
 	def makeInstaller(self, xenv, root, name, fmask):
 		dir = name
 		tar = name + '-src.tar.gz'
@@ -86,8 +106,5 @@ class Faerion:
 			for em in string.split(os.environ['CPATH'], ';'):
 				env.Append(CPPPATH = em)
 				print 'Found directory %s in the environment.' % (em)
-
-def Build():
-	return Faerion()
 
 # vim:ts=4:sts=4:sw=4:noet:nocindent:syntax=python
