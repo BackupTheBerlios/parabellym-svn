@@ -14,6 +14,8 @@ using namespace funs;
 
 seml::seml()
 {
+	scount = 0;
+	wcount = 0;
 	pthread_cond_init(&cv, NULL);
 }
 
