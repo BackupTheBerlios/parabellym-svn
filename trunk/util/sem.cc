@@ -7,8 +7,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include "ftspec.h"
 #include "sem.h"
+#include "ftspec.h"
 
 using namespace funs;
 
@@ -26,10 +26,14 @@ seml::~seml()
 
 bool seml::waitex(mutex &mx, bool locked)
 {
-	bool rc;
+	bool rc = false;
 	if (!locked)
 		mx.enter();
-	rc = pthread_cond_wait(&cv, mx) ? true : false;
+	wcount++;
+	while (scount == 0)
+		rc = pthread_cond_wait(&cv, mx) ? true : false;
+	wcount--;
+	scount--;
 	if (!locked)
 		mx.leave();
 	return rc;
@@ -46,20 +50,29 @@ bool seml::wait(mutex &mx, const ftspec &ts)
 #endif
 
 	{
+		bool rc = false;
 		mlock lock(mx);
-		errno = pthread_cond_timedwait(&cv, mx, &pts);
-		return errno ? false : true;
+		wcount++;
+		while (scount == 0)
+			rc = pthread_cond_timedwait(&cv, mx, &pts) ? false : true;
+		wcount--;
+		scount--;
+		return rc;
 	}
 }
 
 
-bool seml::post()
+bool seml::post(mutex &mx)
 {
+	mlock lock(mx);
+	scount += 1;
 	return pthread_cond_signal(&cv) ? false : true;
 }
 
 
-bool seml::broadcast()
+bool seml::broadcast(mutex &mx)
 {
+	mlock lock(mx);
+	scount += wcount;
 	return pthread_cond_broadcast(&cv) ? false : true;
 }

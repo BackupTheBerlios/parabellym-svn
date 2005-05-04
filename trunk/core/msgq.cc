@@ -201,7 +201,7 @@ bool msgq::body::post(const msgp &mp)
 		log((flog, flMmq, "%x: locked up, pushing in", this));
 
 		packetlist.push_back(mp);
-		psem.post();
+		psem.post(mx);
 	}
 
 	log((flog, flMmq, "%x: posted ok", this));
@@ -212,7 +212,7 @@ void msgq::body::signal(int sig)
 {
 	mlock lock(mx);
 	siglist.push_back(sig);
-	psem.post();
+	psem.post(mx);
 }
 
 int msgq::body::subscribe(const char *name)

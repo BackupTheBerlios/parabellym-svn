@@ -9,8 +9,8 @@
 // the class is to automate initialization and destruction of the
 // corresponding system objects.
 
-#ifndef __parabellym_util_sem_h
-#define __parabellym_util_sem_h
+#ifndef __funs_sem_h
+#define __funs_sem_h
 
 #include "mutex.h"
 
@@ -26,14 +26,19 @@ class ftspec;
 class seml
 {
 	pthread_cond_t cv;
+	// The number of signals not yet dequeued.
+	unsigned int scount;
+	// The number of waiting threads.  Used by broadcast()
+	// to signal this much times.
+	unsigned int wcount;
 public:
 	seml();
 	~seml();
 	bool waitex(mutex &mx, bool locked = false);
 	bool wait(mutex &mx) { return waitex(mx, false); }
 	bool wait(mutex &mx, const ftspec &ts);
-	bool broadcast();
-	bool post();
+	bool broadcast(mutex  &mx);
+	bool post(mutex &mx);
 };
 
 
@@ -48,12 +53,10 @@ public:
 	bool wait() { return seml::wait(mx); }
 	bool wait(const ftspec &ts) { return seml::wait(mx, ts); }
 	bool waitex(bool locked = false) { return seml::waitex(mx, locked); }
-	bool broadcast() { return seml::broadcast(); }
-	bool post() { return seml::post(); }
+	bool broadcast() { return seml::broadcast(mx); }
+	bool post() { return seml::post(mx); }
 };
 
-}
+};
 
-using namespace funs;
-
-#endif // __parabellym_util_sem_h
+#endif // __funs_sem_h
