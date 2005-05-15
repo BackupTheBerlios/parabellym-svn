@@ -40,7 +40,7 @@ int mdisps::core_shutdown(enum para_unload_mode mode)
 		msgq::signal_bc(PSIG_UNLOAD, queue);
 	case PUC_WAIT:
 		mdispb::wait_unload();
-		log((flog, flGen, "all modules have quit, ja mata"));
+		// log((flog, flGen, "all modules have quit, ja mata"));
 		return PEC_SUCCESS;
 	default:
 		return PEC_HAVE_MODULES;
