@@ -165,13 +165,13 @@ struct para_msgi_s
 		this->rreq = rreq;
 		this->signal = signal;
 	}
-	bool operator == (int id)
+	bool operator == (int msgid)
 	{
-		return (msgid == id);
+		return (this->msgid == msgid);
 	}
-	bool operator != (int id)
+	bool operator != (int msgid)
 	{
-		return (msgid != id);
+		return (this->msgid != msgid);
 	}
 	int receive(void)
 	{
