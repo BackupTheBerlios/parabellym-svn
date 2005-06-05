@@ -53,7 +53,8 @@ public:
 	}
 };
 
-para_module()
+// para_module()
+extern "C" void __stdcall para_mod_body(int QueueId)
 {
 	sleep(1);
 

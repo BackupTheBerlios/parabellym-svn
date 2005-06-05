@@ -3,7 +3,7 @@
 
 include Makedefs.faerion.include
 
-DIRS = core # util docs/docbook
+DIRS = core docs/docbook
 VERS = 1.0
 PACK = parabellym
 
