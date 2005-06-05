@@ -15,7 +15,7 @@ mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Headers
 mkdir -p $FMWK_NAME.framework/Versions/$FMWK_VER/Resources
 
 echo "copying headers and libraries into framework ..."
-cp -f core/api.h $FMWK_NAME.framework/Versions/$FMWK_VER/Headers/
+cp -f core/api.h core/plus.h $FMWK_NAME.framework/Versions/$FMWK_VER/Headers/
 cp -f core/libparabellym.dylib $FMWK_NAME.framework/Versions/$FMWK_VER/$FMWK_NAME
 cp -f LICENSE $FMWK_NAME.framework
 
