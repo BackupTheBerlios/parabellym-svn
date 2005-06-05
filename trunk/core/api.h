@@ -18,11 +18,6 @@
 # include <stdbool.h>
 #endif
 
-/* We need strlen to assign strings to para_iov_t */
-#if defined(__cplusplus)
-# include <string.h>
-#endif
-
 enum para_error_codes
 {
 	/* message queue */

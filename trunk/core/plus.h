@@ -8,6 +8,8 @@
 #define __parabellym_plus_h
 
 #include "api.h"
+#include <string.h>
+#include <wchar.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -51,6 +53,32 @@ namespace parabellym
 			data = src.data;
 			size = src.size;
 		}
+		attachment(const char *s)
+		{
+			data = s;
+			size = s ? strlen(s) + 1 : 0;
+		}
+		attachment(const wchar_t *s)
+		{
+			data = s;
+			size = s ? (wcslen(s) + 1) * sizeof(wchar_t) : 0;
+		}
+		attachment(const std::string &s)
+		{
+			data = s.c_str();
+			size = s.size() + 1;
+		}
+		attachment(const std::wstring &s)
+		{
+			data = s.c_str();
+			size = (s.size() + 1) * sizeof(wchar_t);
+		}
+		template <class T>
+		attachment(const T &s)
+		{
+			data = &s;
+			size = sizeof(*&s);
+		}
 		operator const para_iov_t * ()
 		{
 			return this;
@@ -70,12 +98,6 @@ namespace parabellym
 		void * as_pointer() const
 		{
 			return const_cast<void *>(* reinterpret_cast<void * const *>(data));
-		}
-		attachment& operator = (const std::string &s)
-		{
-			data = s.c_str();
-			size = s.size();
-			return *this;
 		}
 	};
 
