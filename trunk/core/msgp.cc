@@ -91,8 +91,9 @@ void msgp::map(para_msgi_t *info, class mdisp *& blocked)
 
 	// remap the attachments.
 	for (unsigned int idx = 0; idx < info->attc; ++idx) {
-		info->attv[idx].data = tmp;
-		getraw(tmp, NULL, info->attv[idx].size);
+		para_iov_t *mi = const_cast<para_iov_t *>(info->attv + idx);
+		mi->data = tmp;
+		getraw(tmp, NULL, mi->size);
 	}
 }
 

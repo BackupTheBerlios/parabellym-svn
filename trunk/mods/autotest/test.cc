@@ -1,5 +1,4 @@
-// parafile: simple profile storage for Parabellym
-// Copyright (C) 2003 hex@faerion.oss and others.
+// Copyright (C) 2003-2005 hex@faerion.oss and others.
 // See file LICENSE for details about usage and redistribution.
 //
 // $Id$

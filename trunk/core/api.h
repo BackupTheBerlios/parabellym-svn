@@ -1,6 +1,6 @@
 /*
  * Parabellym: an environment for building extensible modular applications.
- * Copyright (c) 2003-2004 The Faerion Team, http://www.faerion.oss/
+ * Copyright (c) 2003-2005 The Faerion Team, http://www.faerion.oss/
  * Read the LICENSE file for details about the distribution.
  *
  * $Id$
@@ -14,7 +14,9 @@
 #include <stddef.h>
 
 /* We need this for bool in C99 mode */
-#include <stdbool.h>
+#if defined(HAVE_stdbool_h)
+# include <stdbool.h>
+#endif
 
 /* We need strlen to assign strings to para_iov_t */
 #if defined(__cplusplus)
@@ -84,47 +86,13 @@ enum para_unload_mode
 # define PARA_API(type) __pc_ext type __stdcall __pc_export
 #else
 # define PARA_API(type) __pc_ext type __stdcall __pc_import
-__pc_ext void __stdcall __pc_export para_mod_body(int qid);
+# define para_module() __pc_ext void __stdcall __pc_export para_mod_body(int QueueId)
 #endif
 
 typedef struct para_iov_t
 {
 	const void *data;
 	size_t size;
-#if defined(__cplusplus)
-	para_iov_t(void)
-	{
-		data = (void*)0;
-		size = 0;
-	}
-	para_iov_t(void *_data, size_t _size)
-	{
-		data = _data;
-		size = _size;
-	}
-	operator const para_iov_t * (void)
-	{
-		return this;
-	}
-	const char * as_str() const
-	{
-		return reinterpret_cast<const char *>(data);
-	}
-	int as_int() const
-	{
-		return * reinterpret_cast<const int *>(data);
-	}
-	void * as_ptr() const
-	{
-		return const_cast<void *>(* reinterpret_cast<void * const *>(data));
-	}
-	para_iov_t& operator = (const char *nts)
-	{
-		data = nts;
-		size = nts ? strlen(nts) + 1 : 0;
-		return *this;
-	}
-#endif /* __cplusplus */
 } para_iov_t;
 
 typedef struct para_msgi_s para_msgi_t;
@@ -150,67 +118,9 @@ struct para_msgi_s
 {
 	int msgid;
 	unsigned int attc;
-	para_iov_t *attv;
+	const para_iov_t *attv;
 	bool rreq;
 	int signal;
-#if defined(__cplusplus)
-	para_msgi_s(int msgid = 0, unsigned int attc = 0, para_iov_t *attv = NULL, bool rreq = false, int signal = 0)
-	{
-		this->msgid = msgid;
-		this->attc = attc;
-		this->attv = attv;
-		this->rreq = rreq;
-		this->signal = signal;
-	}
-	bool operator == (int msgid)
-	{
-		return (this->msgid == msgid);
-	}
-	bool operator != (int msgid)
-	{
-		return (this->msgid != msgid);
-	}
-	int receive(void)
-	{
-		return para_msg_receive(this);
-	}
-	int reply(void) const
-	{
-		return para_msg_reply(this);
-	}
-	int send(void)
-	{
-		return para_msg_send(this);
-	}
-#endif
 };
-
-#if defined(__cplusplus)
-namespace parabellym
-{
-	class msgid
-	{
-		int _msgid;
-	public:
-		operator int () const
-		{
-			return _msgid;
-		}
-		bool is_valid() const
-		{
-			return (_msgid > 0);
-		}
-		msgid(const char *name)
-		{
-			_msgid = para_msg_subscribe(name);
-		}
-		~msgid()
-		{
-			if (is_valid())
-				para_msg_unsubscribe(_msgid);
-		}
-	};
-};
-#endif
 
 #endif /* __parabellum_api_h */

@@ -114,12 +114,13 @@ int main(int argc, char * const * argv)
 	}
 
 	while (argc != 0) {
+		int rc;
 		fprintf(stdout, "Loading module %s...", argv[0]);
-		if (para_mod_load(argv[0]) == PEC_SUCCESS) {
+		if ((rc = para_mod_load(argv[0])) == PEC_SUCCESS) {
 			fprintf(stdout, " done.\n");
 			++modcount;
 		} else {
-			fprintf(stdout, " failed.\n");
+			fprintf(stdout, " failed: %s.\n", para_errstr(rc));
 		}
 		--argc, ++argv;
 	}

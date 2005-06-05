@@ -148,5 +148,5 @@ int message::send(para_msgi_t *info, mdisp *sender)
 	}
 
 	log((flog, flMsg, "%x: sent", info->msgid));
-	return (info->rreq && count == 0) ? PEC_MSG_NO_RECIPIENT : PEC_SUCCESS;
+	return (/* info->rreq && */ count == 0) ? PEC_MSG_NO_RECIPIENT : PEC_SUCCESS;
 }

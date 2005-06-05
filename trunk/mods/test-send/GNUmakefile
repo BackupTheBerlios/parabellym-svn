@@ -6,11 +6,17 @@ include ../../Makedefs.faerion.include
 TARGET = library.shared
 PROG   = libtest-send.$(MDF_SOEXT)
 SRCS   = $(wildcard *.cc)
-LIBS  += parabellym stdc++
+LIBS  += stdc++
 DEFS  += VERSION_NUM="1,0,0,0"
 
-ifeq ($(MDF_OSNAME),NT)
+ifeq ($(OSNAME),nt)
   SRCS += $(wildcard *.rc)
+endif
+
+ifeq ($(OSNAME),darwin)
+  FRAMEWORKS += Parabellym
+else
+  LIBS += parabellym
 endif
 
 include ../../Makedefs.faerion

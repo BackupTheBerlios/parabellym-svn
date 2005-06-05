@@ -21,7 +21,7 @@ fake: all
 	mkdir -p fake-$(VERS)/include/parabellym
 	mkdir -p fake-$(VERS)/share/parabellym
 	cp LICENSE fake-$(VERS)/share/parabellym
-	cp core/api.h fake-$(VERS)/include/parabellym
+	cp core/api.h core/plus.h fake-$(VERS)/include/parabellym
 	cp core/libparabellym.$(MDF_SOEXT) fake-$(VERS)/lib
 ifeq ($(OSNAME),NT)
 	cp core/libparabellym.$(MDF_SOEXT).a fake-$(VERS)/lib
@@ -41,9 +41,9 @@ package: fake
 
 install: fake
 ifeq ($(OSNAME),darwin)
-	MDF_ICONV="$(MDF_ICONV)" DOCBOOKPATH="$(DOCBOOKPATH)" PACK="$(PACK)" VERS="$(VERS)" osdep/darwin/install
+	MDF_ICONV="$(MDF_ICONV)" DOCBOOKPATH="$(DOCBOOKPATH)" PACK="$(PACK)" VERS="$(VERS)" $(SUDO) osdep/darwin/install && rm -rf fake-$(VERS)
 else
-	cp -R fake-$(VERS)/* $(PREFIX)/ && rm -rf fake-$(VERS)
+	$(SUDO) cp -R fake-$(VERS)/* $(PREFIX)/ && rm -rf fake-$(VERS)
 endif
 
 run:

@@ -2,13 +2,14 @@
 
 . "./configure.in"
 
-find_exe "MK" "gmake" "make"
 find_exe "CC" "cc" "gcc" "mingw32-gcc"
-find_exe "RC" "windres"
 find_exe "CPP" "cpp -E"
 find_exe "MDF_GNUPG" "gpg"
 find_exe "MDF_ICONV" "iconv"
 find_exe "MDF_XSLTPROC" "xsltproc"
+find_exe "MK" "gmake" "make"
+find_exe "RC" "windres"
+find_exe "SUDO" "sudo"
 find_dir INCDIR "$PREFIX/include"
 find_dir LIBDIR "$PREFIX/lib"
 find_lib flog
@@ -22,7 +23,7 @@ find_func strlcpy
 
 VERSION_NUM="\"1,0,0,0\""
 
-out_makefile "Makedefs.faerion.include" "*" "MDF_ICONV" "VERSION_NUM"
+out_makefile "Makedefs.faerion.include" "*" "MDF_ICONV" "VERSION_NUM" "SUDO"
 
 cat << EOF
 

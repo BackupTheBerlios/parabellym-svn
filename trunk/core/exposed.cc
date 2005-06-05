@@ -19,20 +19,20 @@ static const struct errmsg {
 	{ PEC_MSG_NOT_FOUND, "message not found" },
 	{ PEC_MSG_BAD_ID, "bad message id" },
 	{ PEC_MSG_FAILED, "general message failure" },
+	{ PEC_MSG_NO_RECIPIENT, "no subscribers for the message" },
 	{ PEC_MOD_FAILED, "general module failure" },
 	{ PER_MOD_INVALID, "invalid module" },
 	{ PEC_MOD_NOT_LOADED, "module not found" },
 	{ PEC_MOD_ENTRY_MISSING, "the module does not have a para_mod_body function" },
 	{ PEC_MOD_REQUIRED, "called from outside a module's main thread" },
 	{ PEC_MOD_BAD_ID, "bad module id" },
-	{ PEC_SIGNAL, "interrupted by a signal" },
 	{ PEC_INVALID_ARGUMENT, "invalid argument" },
 	{ PEC_MEMORY_ERROR, "memory error" },
 	{ PEC_INIT_FAILURE, "initialization failure" },
 	{ PEC_HAVE_MODULES, "some modules are active" },
 	{ PEC_NOT_IMPLEMENTED, "not implimented" },
 	{ PEC_UNAUTHORIZED, "the current thread is not authorized for this operation" },
-
+	{ PEC_SIGNAL, "interrupted by a signal" },
 	{ PEC_SUCCESS, "success" }
 };
 
