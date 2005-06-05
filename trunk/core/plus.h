@@ -88,6 +88,7 @@ namespace parabellym
 		std::map<int, std::string> mFwdMap;
 		std::map<std::string, int> mRevMap;
 	protected:
+		bool mRunLoop;
 		int get_queue_id() const { return mQueueId; }
 		// Last occured error.
 		int get_last_error_id() const { return mLastErr; }
@@ -189,6 +190,8 @@ namespace parabellym
 		// Handling messages.
 		virtual void on_message(int /*msgid*/, const std::string & /*msgname*/, const attachments & /*att*/, bool /*needs_answer*/) { }
 		virtual void on_signal(int /*sigid*/) { }
+		// Exit module.
+		void exit() { mRunLoop = false; }
 	public:
 		module_ne(int QueueId)
 		{
@@ -200,7 +203,9 @@ namespace parabellym
 		{
 			para_msgi_t mi;
 
-			for (bool loop = true; loop; ) {
+			mRunLoop = true;
+
+			while (mRunLoop) {
 				switch (mLastErr = para_msg_receive(&mi)) {
 				case PEC_SUCCESS:
 					{
@@ -215,12 +220,12 @@ namespace parabellym
 					break;
 				case PEC_SIGNAL:
 					if (mi.signal == PSIG_UNLOAD)
-						loop = false;
+						mRunLoop = false;
 					else
 						on_signal(mi.signal);
 					break;
 				default:
-					loop = false;
+					mRunLoop = false;
 				}
 			}
 		}
@@ -278,6 +283,7 @@ namespace parabellym
 			if (!module_ne::reply(att))
 				throw exception(get_last_error_id());
 		}
+		void exit() { module_ne::exit(); }
 		virtual void on_message(int /*msgid*/, const std::string & /*msgname*/, const attachments & /*att*/, bool /*needs_answer*/) { }
 		virtual void on_signal(int /*sigid*/) { }
 		virtual void run() { module_ne::run(); }
